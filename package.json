@@ -1,0 +1,14 @@
+{
+  "name": "quick_project",
+  "version": "1.0.0",
+  "description": "项目信息管理工具",
+  "main": "main.js",
+  "scripts": {
+	"start": "electron ."
+  },
+  "author": "ztion",
+  "license": "ISC",
+  "devDependencies": {
+    "electron": "^22.0.0"
+  }
+}
