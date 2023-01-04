@@ -12,10 +12,10 @@
     <!-- 标题栏 -->
     <div id="titleBar" class="titleBar">
       <div class="titleText">{{title}}</div>
-      <div class="closeIcon">
+      <div class="closeIcon" v-on:click="close">
         <img id="closeImg" src="./img/icon/关闭.png" width="16px" alt="">
       </div>
-      <div class="minimizeIcon" v-on:click="close">
+      <div class="minimizeIcon" v-on:click="minimize">
         <img id="closeImg" src="./img/icon/最小化.png" width="16px" alt="">
       </div>
     </div>

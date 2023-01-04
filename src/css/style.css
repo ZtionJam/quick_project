@@ -9,7 +9,7 @@
     border-top-right-radius: 10px;
     opacity: 0.5;
 }
-/* 标题文本 */
+/* 标题文本 */ 
 .titleText{
     font-size: 14px;
     width: 80%;
@@ -67,7 +67,6 @@
     height: 100%;
     padding-left: 5%;
     margin-top:5%;
-    
 }
 
 
@@ -99,7 +98,7 @@ body {
     height: 200px;
     width: 320px;
     margin: 15px;
-    
+    cursor: pointer;
     border-radius: 8px;
 }
 

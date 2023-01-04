@@ -1,4 +1,4 @@
-const { Menu, app, BrowserWindow } = require('electron')
+const { Menu, app, BrowserWindow, ipcRenderer, ipcMain } = require('electron')
 Menu.setApplicationMenu(null)
 require("@electron/remote/main").initialize();
 
@@ -24,6 +24,19 @@ const createWindow = () => {
         // 初始化后再显示
         win.show()
     })
+    // 推出
+    ipcMain.on('closeApp', () => {
+        // win.hide()
+        app.quit()
+    })
+    // 最小化
+    ipcMain.on('minApp', () => {
+        win.minimize()
+    })
+    var path=app.getAppPath();
+    console.log("启动目录："+path)
+
+
     //打开开发工具
     // win.webContents.openDevTools();
 }
