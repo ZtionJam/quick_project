@@ -33,8 +33,18 @@ const createWindow = () => {
     ipcMain.on('minApp', () => {
         win.minimize()
     })
-    var path=app.getAppPath();
-    console.log("启动目录："+path)
+    // 打开项目
+    ipcMain.on('openProject', () => {
+        win.loadFile('./src/page/project.html')
+    })
+    // 返回首页
+    ipcMain.on('backIndex', () => {
+        win.loadFile('./src/index.html')
+    })
+
+
+    var path = app.getAppPath();
+    console.log("启动目录：" + path)
 
 
     //打开开发工具

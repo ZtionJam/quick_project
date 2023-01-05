@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <title>项目</title>
+  <script src="../js/vue.js"></script>
+  <link rel="stylesheet" href="../css/style.css" />
+  <link rel="stylesheet" href="../css/project.css" />
+</head>
+
+<body>
+  <div id="box">
+    <!-- 标题栏 -->
+    <div id="titleBar" class="titleBar">
+      <div class="backIcon" v-on:click="backIndex">
+        <img id="backImg" src="../img/icon/返回.png" width="16px" alt="">
+      </div>
+      <div class="titleText">{{title}}</div>
+      <div class="closeIcon" v-on:click="close">
+        <img id="closeImg" src="../img/icon/关闭.png" width="16px" alt="">
+      </div>
+      <div class="minimizeIcon" v-on:click="minimize">
+        <img id="closeImg" src="../img/icon/最小化.png" width="16px" alt="">
+      </div>
+    </div>
+
+
+  </div>
+  <script src="../js/project.js"></script>
+</body>
+
+</html>

@@ -4,14 +4,35 @@ const { port1, port2 } = new MessageChannel()
 var app = new Vue({
     el: '#box',
     data: {
-        title: '首页'
+        title: '首页',
+        projects:[
+            {
+                id:'1',
+                projectName:'阿里巴巴开发项目',
+                projectTime:'2022-12-31',
+            },{
+                id:'2',
+                projectName:'腾讯导航项目',
+                projectTime:'2022-8-31',
+            },{
+                id:'3',
+                projectName:'项目信息管理项目',
+                projectTime:'2022-8-31',
+            }
+        ]
+    },
+    mounted() {
+        this.atvImg()
     },
     methods: {
+        openProject(event) {
+            ipcRenderer.send("openProject", "openProject")
+        },
         close(event) {
-            ipcRenderer.send("closeApp","closeApp")
+            ipcRenderer.send("closeApp", "closeApp")
         },
         minimize(event) {
-            ipcRenderer.send("minApp","minApp")
+            ipcRenderer.send("minApp", "minApp")
         },
         atvImg() {
             var d = document,
@@ -36,7 +57,7 @@ var app = new Vue({
                 if (totalLayerElems <= 0) {
                     continue;
                 }
-                console.log(1)
+                var doms=thisImg.querySelectorAll('.cardInfo');
                 while (thisImg.firstChild) {
                     thisImg.removeChild(thisImg.firstChild);
                 }
@@ -61,36 +82,39 @@ var app = new Vue({
                     layer.setAttribute('data-layer', i);
                     layer.style.backgroundImage = 'url(' + imgSrc + ')';
                     layersHTML.appendChild(layer);
-
                     layers.push(layer);
                 }
 
                 containerHTML.appendChild(shadowHTML);
                 containerHTML.appendChild(layersHTML);
                 containerHTML.appendChild(shineHTML);
-                thisImg.appendChild(containerHTML);
+                containerHTML.appendChild(doms[0]);
+
+                thisImg.insertBefore(containerHTML,thisImg.children[0])
+
+                // thisImg.appendChild(containerHTML);
 
                 var w = thisImg.clientWidth || thisImg.offsetWidth || thisImg.scrollWidth;
                 thisImg.style.transform = 'perspective(' + w * 3 + 'px)';
 
                 if (supportsTouch) {
                     win.preventScroll = false;
-                        (function (_thisImg, _layers, _totalLayers, _shine) {
-                            thisImg.addEventListener('touchmove', function (e) {
-                                if (win.preventScroll) {
-                                    e.preventDefault();
-                                }
-                                processMovement(e, true, _thisImg, _layers, _totalLayers, _shine);
-                            });
-                            thisImg.addEventListener('touchstart', function (e) {
-                                win.preventScroll = true;
-                                processEnter(e, _thisImg);
-                            });
-                            thisImg.addEventListener('touchend', function (e) {
-                                win.preventScroll = false;
-                                processExit(e, _thisImg, _layers, _totalLayers, _shine);
-                            });
-                        })(thisImg, layers, totalLayerElems, shineHTML);
+                    (function (_thisImg, _layers, _totalLayers, _shine) {
+                        thisImg.addEventListener('touchmove', function (e) {
+                            if (win.preventScroll) {
+                                e.preventDefault();
+                            }
+                            processMovement(e, true, _thisImg, _layers, _totalLayers, _shine);
+                        });
+                        thisImg.addEventListener('touchstart', function (e) {
+                            win.preventScroll = true;
+                            processEnter(e, _thisImg);
+                        });
+                        thisImg.addEventListener('touchend', function (e) {
+                            win.preventScroll = false;
+                            processExit(e, _thisImg, _layers, _totalLayers, _shine);
+                        });
+                    })(thisImg, layers, totalLayerElems, shineHTML);
                 } else {
                     (function (_thisImg, _layers, _totalLayers, _shine) {
                         thisImg.addEventListener('mousemove', function (e) {
@@ -132,7 +156,7 @@ var app = new Vue({
                 if (elem.firstChild.className.indexOf(' over') != -1) {
                     imgCSS += ' scale3d(1.07,1.07,1.07)';
                 }
-                elem.firstChild.style.transform = imgCSS;
+                elem.firstElementChild.style.transform = imgCSS;
 
                 shine.style.background = 'linear-gradient(' + angle + 'deg, rgba(255,255,255,' + (pageY - offsets.top - bdst) / h * 0.4 + ') 0%,rgba(255,255,255,0) 80%)';
                 shine.style.transform = 'translateX(' + (offsetX * totalLayers) - 0.1 + 'px) translateY(' + (offsetY * totalLayers) - 0.1 + 'px)';
@@ -163,8 +187,6 @@ var app = new Vue({
 
         }
 
-    },
-    mounted() {
-        this.atvImg()
     }
+    
 })
