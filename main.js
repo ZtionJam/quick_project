@@ -1,5 +1,5 @@
 const { Menu, app, BrowserWindow, ipcRenderer, ipcMain } = require('electron')
-Menu.setApplicationMenu(null)
+// Menu.setApplicationMenu(null)
 require("@electron/remote/main").initialize();
 
 const createWindow = () => {
@@ -48,7 +48,7 @@ const createWindow = () => {
 
 
     //打开开发工具
-    // win.webContents.openDevTools();
+    win.webContents.openDevTools();
 }
 
 app.whenReady().then(() => {
