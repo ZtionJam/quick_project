@@ -26,6 +26,7 @@ var app = new Vue({
     },
     methods: {
         openProject(event) {
+
             ipcRenderer.send("openProject", "openProject")
         },
         close(event) {

@@ -25,10 +25,10 @@
       <div v-for="project in projects" class="cover atvImg">
         <div class="atvImg-layer" data-img="http://robindelaporte.fr/codepen/visa-bg.jpg"></div>
         <div class="cardInfo">
-          <div class="projectLogo" style="background: url('./img/头像.jpg');background-size: cover;"></div>
-          <div class="projectName"><input class="projectNameText" type="text" :value="project.projectName" disabled /></div>
-          <div class="projectTime"><input class="projectNameText" type="text" :value="project.projectTime" disabled /></div>
-          <div class="next" v-on:click="openProject"></div>
+          <div class="projectLogo" title="logo" style="background: url('./img/头像.jpg');background-size: cover;"></div>
+          <div class="projectName" title="项目名字"><input class="projectNameText" type="text" :value="project.projectName" disabled /></div>
+          <div class="projectTime" title="项目开始时间"><input class="projectNameText" type="text" :value="project.projectTime" disabled /></div>
+          <div class="next" v-on:click="openProject" title="打开项目"></div>
         </div>
       </div>
 
