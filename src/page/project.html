@@ -3,6 +3,8 @@
 
 <head>
   <title>项目</title>
+  <script src="../js/waterfall.js"></script>
+  <!-- <script src="../js/vue-grid-layout.umd.min.js"></script> -->
   <script src="../js/vue.js"></script>
   <link rel="stylesheet" href="../css/style.css" />
   <link rel="stylesheet" href="../css/project.css" />
@@ -28,30 +30,51 @@
         <div class="catBox">
         </div>
       </div>
+
       <div class="projectCards">
 
         <div class="projectInfo">
-          
+          <div class="projectLogo" title="logo" style="background: url('../img/头像.jpg');background-size: cover;"></div>
+          <div class="projectName" title="项目名字"><input class="projectNameText" type="text" :value="project.projectName"
+              disabled /></div>
+          <div class="projectTime" title="项目开始时间"><input class="projectNameText" type="text"
+              :value="project.projectTime" disabled /></div>
+
         </div>
-        <div class="card"></div>
-        <div class="card"></div>
-        <div class="card"></div>
-        <div class="card"></div>
-        <div class="card"></div>
-        <div class="card"></div>
-        <div class="card"></div>
-        <div class="card"></div>
-        <div class="card"></div>
-        <div class="card"></div>
-        <div class="card"></div>
-        <div class="card"></div>
-        <div class="card"></div>
+        <div class="card" v-for="(item,index) in card" :key="index">
+          <div class="title">{{item.title}}</div>
+          <div class="dataBox" v-for="(elem,index) in item.data" :key="index">
+            <div class="nameBox">
+              <input class="dataName" type="text" :value="elem.name">
+            </div>
+            <div class="valueBox">
+              <input class="projectNameText" type="text" :value="elem.value">
+            </div>
+          </div>
+        </div>
+        <!-- <waterfall class="projectCards" :line-gap="200" :watch="items">
+          <waterfall-slot class="card" style="display: inline-block;" v-for="(item, index) in card" :width="item.width"
+            ::height="item.hight" :order="index" :key="index">
+            <div class="title">{{item.title}}</div>
+            <div class="dataBox" v-for="(elem,index) in item.data" :key="index">
+              <div class="nameBox">
+                <input class="dataName" type="text" :value="elem.name">
+              </div>
+              <div class="valueBox">
+                <input class="projectNameText" type="text" :value="elem.value">
+              </div>
+            </div>
+          </waterfall-slot>
+          </waterfall-slot>
+        </waterfall> -->
+
       </div>
-      <div class="rightPanel"></div>
+      <div class="rightPanel"> </div>
     </div>
 
   </div>
   <script src="../js/project.js"></script>
+  <script src="../js/jquery.js"></script>
 </body>
 
 </html>
