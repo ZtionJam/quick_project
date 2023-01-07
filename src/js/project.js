@@ -3,21 +3,6 @@ const { ipcRenderer } = require('electron')
 const { port1, port2 } = new MessageChannel()
 var $ = require('jquery')
 
-var cardColors = [
-    'linear-gradient(135deg,rgba(252,227,138,0.5),rgba(243,129,129,0.5))',
-    "linear-gradient(135deg,rgba(245,78,162,0.5),rgba(255,118,118,0.5))",
-    "linear-gradient(135deg,rgba(23,234,217,0.5),rgba(96,120,234,0.5))",
-    "linear-gradient(135deg,rgba(98,39,116,0.5),rgba(197,51,100,0.5))",
-    "linear-gradient(135deg,rgba(113,23,234,0.5),rgba(234,96,96,0.5))",
-    "linear-gradient(135deg,rgba(66,230,149,0.5),rgba(59,178,184,0.5))",
-    "linear-gradient(135deg,rgba(240,47,194,0.5),rgba(96,148,234,0.5))",
-    "linear-gradient(135deg,rgba(101,121,155,0.5),rgba(94,37,99,0.5))",
-    "linear-gradient(135deg,rgba(24,78,104,0.5),rgba(87,202,133,0.5))",
-    "linear-gradient(135deg,rgba(91,36,122,0.5),rgba(27,206,223,0.5))",
-    "linear-gradient(135deg,rgba(253,235,113,0.5),rgba(248,216,0,0.5))",
-    "linear-gradient(135deg,rgba(171,220,255,0.5),rgba(3,150,255,0.5))"
-]
-
 var app = new Vue({
     el: '#box',
     components: {
@@ -185,13 +170,12 @@ var app = new Vue({
             box.each(function (index, value) {
                 var boxHeight = box.eq(index).height();
                 //背景色
-                var back = Math.floor(Math.random() * (cardColors.length - 1 - 0 + 1) + 0);
+                $(value).css({
+                    'background': getRandomCardColor('135deg', '0.5')
+                });
                 if (index < num) {
                     //第一行作为基准
                     boxArr[index] = $(this).height();
-                    $(value).css({
-                        'background': cardColors[back]
-                    });
                 } else {
                     //定位
                     var minBoxHeight = Math.min.apply(this, boxArr);
@@ -200,7 +184,6 @@ var app = new Vue({
                         'position': 'absolute',
                         'top': minBoxHeight + 35,
                         'left': box.eq(minIndex).position().left,
-                        'background': cardColors[back]
                     });
                     boxArr[minIndex] += $(this).height() + 35;
                 };
@@ -216,11 +199,33 @@ var app = new Vue({
             var documentHeight = $(window).height();
             var scrollHeight = $(window).scrollTop();
             return (nodeOffsetHeight < documentHeight + scrollHeight) ? true : false
+        },
+        changeCardColor() {
+            $('.card').each((index, card) => {
+                $(card).css({
+                    'background': getRandomCardColor('135deg', '0.5')
+                });
+            })
+
+        },
+        copyCard(event) {
+            console.log(event.target)
+            this.copyStr('666');
+        },
+        copyStr(text) {
+            const newInput = document.createElement('input');
+            document.body.appendChild(newInput);
+            newInput.value = text;
+            newInput.select();
+            document.execCommand('copy');
+            document.body.removeChild(newInput);
         }
     },
     mounted() {
         window.mainPage = this;
         this.putPicture();
+        this.changeCardColor();
+
     }
 
 })

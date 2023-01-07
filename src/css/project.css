@@ -58,6 +58,7 @@
 .projectCards::-webkit-scrollbar {
     display: none;
 }
+
 .projectInfo {
     width: 48%;
     height: 200px;
@@ -68,6 +69,7 @@
     border-radius: 10px;
     background-color: rgba(255, 255, 255, 0.5);
 }
+
 .card {
     width: 48%;
     /* height: 100px; */
@@ -83,40 +85,148 @@
     box-shadow: 0 2px 8px rgba(14, 21, 47, 0.25);
     /* opacity: 0.8; */
 }
-.card:hover{
+
+.card:hover {
     z-index: 999;
+    background-color: rgba(255, 255, 255, 0.5);
     transform: scale(1.03, 1.03);
 }
-.title{
+
+.card:hover .title>.copyCard {
+    display: inline;
+    transform: all 500ms;
+}
+
+/* 卡片标题 */
+.title {
     width: 100%;
     height: 25px;
     font-size: 14px;
 }
-.dataBox{
+
+.titleInput {
+    width: 86%;
+    height: 25px;
+    font-size: 14px;
+    text-align: left;
+    background: transparent;
+    border: none;
+}
+
+.titleInput:focus {
+    outline: none;
+    cursor: text;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    background-color: rgba(255, 255, 255, 0.5);
+    text-indent: 3px;
+    border-radius: 5px;
+}
+
+.copyCard {
+    background: url('../img//icon/复制.png');
+    background-size: cover;
+    float: right;
+    width: 20px;
+    height: 20px;
+    opacity: 0.6;
+    transform: all 500ms;
+    display: none;
+}
+
+.copyCard:hover {
+    opacity: 1;
+    cursor: pointer;
+}
+
+/* 配置项的第一条往下面一点 */
+.title+div {
+    margin-top: 5px;
+}
+
+/* 记录项 */
+.dataBox {
     width: 100%;
     height: 30px;
-    /* margin-top: 10px; */
 }
-.card :nth-child(2){
-    /* margin-top: 20px; */
-}
-.nameBox{
+
+.nameBox {
     float: left;
-}
-.dataName{
     width: 80px;
+    height: 25px;
+}
+
+.dataName {
+    height: 25px;
+    width: 75px;
     font-size: 14px;
     border: none;
     background-color: transparent;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    line-height: 100%;
+    border-radius: 5px;
+
 }
-.valueBox{
+
+.dataName:focus {
+    outline: none;
+    cursor: text;
+    background-color: rgba(255, 255, 255, 0.5);
+    text-indent: 3px;
+}
+
+.valueBox {
     float: left;
     min-width: 200px;
     height: 25px;
     font-family: SanJiNengLiang;
+    background-color: rgba(255, 255, 255, 0.5);
+    border-radius: 5px;
 }
+
+.valueBox:hover .copyCard {
+    display: block;
+}
+
+/* 值的input */
+.valueInput {
+    /* display: block; */
+    /* margin: 0 auto; */
+    width: 85%;
+    background: transparent;
+    font-size: 14px;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    margin-left: 5px;
+
+}
+
+/* 值的input悬浮 */
+.valueInput:hover {
+    cursor: text;
+}
+
+/* 值的input焦点 */
+.valueInput:focus {
+    outline: none;
+    cursor: text;
+}
+
+.valueBox>.copyCard {
+    margin-top: 5px;
+    width: 15px;
+    height: 15px;
+    margin-right: 2px;
+}
+
+
+
 /* 右边工具 */
-.rightPanel{
+.rightPanel {
     height: 90%;
     width: 8%;
     margin-right: 1%;

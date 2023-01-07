@@ -3,8 +3,7 @@
 
 <head>
   <title>项目</title>
-  <script src="../js/waterfall.js"></script>
-  <!-- <script src="../js/vue-grid-layout.umd.min.js"></script> -->
+  <script src="../js/color.js"></script>
   <script src="../js/vue.js"></script>
   <link rel="stylesheet" href="../css/style.css" />
   <link rel="stylesheet" href="../css/project.css" />
@@ -41,13 +40,19 @@
               :value="project.projectTime" disabled /></div>
         </div>
         <div class="card" v-for="(item,index) in card" :key="index">
-          <div class="title">{{item.title}}</div>
+          <!-- 卡片标题栏目 -->
+          <div class="title">
+            <input class="titleInput" type="text" :value="item.title">
+            <div v-on:click="copyCard" class="copyCard" title="复制卡片信息"></div>
+          </div>
+          <!-- 记录项 -->
           <div class="dataBox" v-for="(elem,index) in item.data" :key="index">
             <div class="nameBox">
               <input class="dataName" type="text" :value="elem.name">
             </div>
             <div class="valueBox">
-              <input class="projectNameText" type="text" :value="elem.value">
+              <input class="projectNameText valueInput" type="text" :value="elem.value">
+              <div class="copyCard" title="复制值"></div>
             </div>
           </div>
         </div>
@@ -68,7 +73,7 @@
         </waterfall> -->
 
       </div>
-      <div class="rightPanel"> </div>
+      <div class="rightPanel" v-on:click="changeCardColor"> </div>
     </div>
 
   </div>
