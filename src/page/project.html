@@ -33,13 +33,12 @@
 
       <div class="projectCards">
 
-        <div class="projectInfo">
+        <div class="card projectInfo">
           <div class="projectLogo" title="logo" style="background: url('../img/头像.jpg');background-size: cover;"></div>
           <div class="projectName" title="项目名字"><input class="projectNameText" type="text" :value="project.projectName"
               disabled /></div>
           <div class="projectTime" title="项目开始时间"><input class="projectNameText" type="text"
               :value="project.projectTime" disabled /></div>
-
         </div>
         <div class="card" v-for="(item,index) in card" :key="index">
           <div class="title">{{item.title}}</div>
