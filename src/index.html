@@ -11,12 +11,18 @@
   <div id="box">
     <!-- 标题栏 -->
     <div id="titleBar" class="titleBar">
+      <div class="addIcon" v-on:click="openAddForm" title="添加卡片">
+        <img id="addImg" src="./img/icon/添加.png" width="16px" alt="">
+      </div>
       <div class="titleText">{{title}}</div>
       <div class="closeIcon" v-on:click="close" title="关闭">
         <img id="closeImg" src="./img/icon/关闭.png" width="16px" alt="">
       </div>
       <div class="minimizeIcon" v-on:click="minimize" title="最小化">
         <img id="closeImg" src="./img/icon/最小化.png" width="16px" alt="">
+      </div>
+      <div class="minimizeIcon setting" v-on:click="openSettingForm" title="应用设置">
+        <img id="closeImg" src="./img/icon/set-up.png" width="16px" alt="">
       </div>
     </div>
 
@@ -26,16 +32,43 @@
         <div class="atvImg-layer" data-img="http://robindelaporte.fr/codepen/visa-bg.jpg"></div>
         <div class="cardInfo">
           <div class="projectLogo" title="logo" style="background: url('./img/头像.jpg');background-size: cover;"></div>
-          <div class="projectName" title="项目名字"><input class="projectNameText" type="text" :value="project.projectName" disabled /></div>
-          <div class="projectTime" title="项目开始时间"><input class="projectNameText" type="text" :value="project.projectTime" disabled /></div>
+          <div class="projectName" title="项目名字">
+            <input class="projectNameText projectInfoInput" type="text" v-model="project.projectName" />
+          </div>
+          <div class="projectTime" title="项目开始时间">
+            <input class="projectNameText projectInfoInput" type="text" v-model="project.projectTime" />
+          </div>
           <div class="next" v-on:click="openProject" title="打开项目"></div>
         </div>
       </div>
 
     </div>
+    <!-- 阴影遮罩 -->
+    <div class="shadowMock"></div>
+    <!-- 添加窗口 -->
+    <div class="addForm">
+      <div class="addFormTitlebar" v-on:click="closeAddForm" title="关闭窗口">
+        <div class="addFormTileText">添加卡片</div>
+        <img id="addFormCloseImg" src="./img/icon/关闭.png" alt="">
+      </div>
+      <div id="addFormLogo" v-on:click="selectImage" class="projectLogo addFormLogo" title="logo" style="background: url('./img/头像.jpg');background-size: cover;">
+        <div class="chooseLogoText">点击选择Logo</div>
+      </div>
+      <div class="projectName addFormProjectName" title="项目名字">
+        <input class="projectNameText projectInfoInput" type="text" placeholder="项目名字" />
+      </div>
+      <div class="projectTime" title="项目开始时间">
+        <input class="projectNameText projectInfoInput" type="text" placeholder="项目开始时间" />
+      </div>
+      <div class="projectTime" title="排序号">
+        <input class="projectNameText projectInfoInput" type="text" placeholder="排序号" />
+      </div>
+      <!-- <div class="next" v-on:click="openProject" title="打开项目"></div> -->
+    </div>
   </div>
   <script src="./js/dom.js"></script>
   <script src="./js/data.js"></script>
+  <script src="./js/color.js"></script>
 </body>
 
 </html>

@@ -1,3 +1,6 @@
+body{
+    user-select: none;
+}
 /* 返回按钮 */
 .backIcon {
     width: 35px;
@@ -239,6 +242,7 @@
     flex-wrap: wrap;
     justify-content: center;
     align-content: space-around;
+    user-select: none;
 }
 .rightPanel >.toolbar{
     background-color: rgba(255, 255, 255, 0.5);

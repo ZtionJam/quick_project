@@ -13,7 +13,7 @@
   <div id="box">
     <!-- 标题栏 -->
     <div id="titleBar" class="titleBar">
-      <div class="backIcon" v-on:click="backIndex">
+      <div class="backIcon" v-on:click="backIndex" title="返回首页">
         <img id="backImg" src="../img/icon/返回.png" width="16px" alt="">
       </div>
       <div class="titleText">{{title}}</div>
@@ -22,6 +22,9 @@
       </div>
       <div class="minimizeIcon" v-on:click="minimize" title="最小化">
         <img id="closeImg" src="../img/icon/最小化.png" width="16px" alt="">
+      </div>
+      <div class="minimizeIcon setting" v-on:click="openSettingForm" title="应用设置">
+        <img id="closeImg" src="../img/icon/set-up.png" width="16px" alt="">
       </div>
     </div>
     <div class="projectContent">
@@ -34,10 +37,12 @@
 
         <div class="card projectInfo">
           <div class="projectLogo" title="logo" style="background: url('../img/头像.jpg');background-size: cover;"></div>
-          <div class="projectName" title="项目名字"><input class="projectNameText" type="text" :value="project.projectName"
-              disabled /></div>
-          <div class="projectTime" title="项目开始时间"><input class="projectNameText" type="text"
-              :value="project.projectTime" disabled /></div>
+          <div class="projectName" title="项目名字">
+            <input class="projectNameText projectInfoInput" type="text" :value="project.projectName" />
+          </div>
+          <div class="projectTime" title="项目开始时间">
+            <input class="projectNameText projectInfoInput" type="text" :value="project.projectTime"/>
+          </div>
         </div>
         <div class="card" v-for="(item,index) in card" :key="index">
           <!-- 卡片标题栏目 -->

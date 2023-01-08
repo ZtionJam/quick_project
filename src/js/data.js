@@ -1,23 +1,36 @@
 
-const { ipcRenderer } = require('electron')
-const { port1, port2 } = new MessageChannel()
+const { ipcRenderer } = require('electron');
+const { port1, port2 } = new MessageChannel();
+var $ = require('jquery');
 var app = new Vue({
     el: '#box',
     data: {
         title: '首页',
-        projects:[
+        projects: [
             {
-                id:'1',
-                projectName:'阿里巴巴开发项目',
-                projectTime:'2022-12-31',
-            },{
-                id:'2',
-                projectName:'腾讯导航项目',
-                projectTime:'2022-8-31',
-            },{
-                id:'3',
-                projectName:'项目信息管理项目',
-                projectTime:'2022-8-31',
+                id: '1',
+                projectName: '阿里巴巴开发项目',
+                projectTime: '2022-12-31',
+            }, {
+                id: '2',
+                projectName: '腾讯导航项目',
+                projectTime: '2022-8-31',
+            }, {
+                id: '3',
+                projectName: '项目信息管理项目',
+                projectTime: '2022-8-31',
+            }, {
+                id: '4',
+                projectName: '项目信息管理项目',
+                projectTime: '2022-8-31',
+            }, {
+                id: '5',
+                projectName: '项目信息管理项目',
+                projectTime: '2022-8-31',
+            }, {
+                id: '6',
+                projectName: '项目信息管理项目',
+                projectTime: '2022-8-31',
             }
         ]
     },
@@ -25,12 +38,43 @@ var app = new Vue({
         this.atvImg()
     },
     methods: {
+        selectImage() {
+            var inputObj = document.createElement('input')
+            inputObj.setAttribute('id', 'my_inputObj');
+            inputObj.setAttribute('type', 'file');
+            inputObj.setAttribute("style", 'visibility:hidden');
+            inputObj.setAttribute("accept", 'image/png, image/jpeg');
+            document.body.appendChild(inputObj);
+
+            inputObj.addEventListener('change', e => {
+                this.putLogo(e)
+            });
+
+            inputObj.click();
+        },
+        putLogo(e) {
+            var file = e.target.files[0];
+            const url=URL.createObjectURL(file)
+            $("#addFormLogo").css({
+                'background': 'url("' + url + '")',
+                'background-size': 'cover'
+            });
+        },
         openProject(event) {
 
             ipcRenderer.send("openProject", "openProject")
         },
         close(event) {
             ipcRenderer.send("closeApp", "closeApp")
+        },
+        openAddForm(event) {
+            $('.addForm').css({ 'background': getRandomCardColor('135deg', '1'), });
+            $('.shadowMock').fadeIn(400);
+            $('.addForm').fadeIn(400);
+        },
+        closeAddForm(event) {
+            $('.shadowMock').fadeOut(200);
+            $('.addForm').fadeOut(200);
         },
         minimize(event) {
             ipcRenderer.send("minApp", "minApp")
@@ -58,7 +102,7 @@ var app = new Vue({
                 if (totalLayerElems <= 0) {
                     continue;
                 }
-                var doms=thisImg.querySelectorAll('.cardInfo');
+                var doms = thisImg.querySelectorAll('.cardInfo');
                 while (thisImg.firstChild) {
                     thisImg.removeChild(thisImg.firstChild);
                 }
@@ -91,7 +135,7 @@ var app = new Vue({
                 containerHTML.appendChild(shineHTML);
                 containerHTML.appendChild(doms[0]);
 
-                thisImg.insertBefore(containerHTML,thisImg.children[0])
+                thisImg.insertBefore(containerHTML, thisImg.children[0])
 
                 // thisImg.appendChild(containerHTML);
 
@@ -189,5 +233,5 @@ var app = new Vue({
         }
 
     }
-    
+
 })
