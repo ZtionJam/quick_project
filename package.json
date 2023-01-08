@@ -20,6 +20,13 @@
   },
   "dependencies": {
     "@electron/remote": "^2.0.9",
-    "electron-squirrel-startup": "^1.0.0"
-  }
+    "electron-squirrel-startup": "^1.0.0",
+    "jquery": "^3.6.3",
+    "vue-waterfall": "^1.0.6"
+  },
+  "repository": {
+    "type": "git",
+    "url": "http://git.ztion.cn/Ztion/quick_project.git"
+  },
+  "keywords": []
 }

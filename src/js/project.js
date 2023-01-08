@@ -201,30 +201,65 @@ var app = new Vue({
             return (nodeOffsetHeight < documentHeight + scrollHeight) ? true : false
         },
         changeCardColor() {
+            // 卡片颜色
             $('.card').each((index, card) => {
                 $(card).css({
-                    'background': getRandomCardColor('135deg', '0.5')
+                    'background': getRandomCardColor('135deg', '0.5'),
+                    'transition': 'all 500ms'
+                });
+            });
+            //工具栏颜色
+            $('.toolbar').each((index, toolbar) => {
+                $(toolbar).css({
+                    'background': getRandomCardColor('135deg', '0.3'),
+                    'transition': 'all 500ms'
                 });
             })
 
         },
-        copyCard(event) {
-            console.log(event.target)
-            this.copyStr('666');
-        },
+        copyCard(item) {
+            console.log(item);
+            var cardText = item.title + "\n";
+            item.data.forEach(d => {
+                cardText += d.name + ": " + d.value + "\n";
+            });
+            this.copyStr(cardText)
+        }
+        ,
         copyStr(text) {
-            const newInput = document.createElement('input');
+            //复制到剪切板
+            const newInput = document.createElement('textarea');
             document.body.appendChild(newInput);
             newInput.value = text;
             newInput.select();
             document.execCommand('copy');
             document.body.removeChild(newInput);
+            //提示弹窗
+            console.log($('.pop').css('bottom'))
+            if ($('.pop').css('bottom') == '2%' || $('.pop').css('bottom') == '12px') {
+                $('.pop').css({
+                    'background': getRandomCardColor('135deg', '0.9'),
+                    'transition': 'all 500ms',
+                    'display': 'block'
+                });
+                //1s后自动回去
+                $('.pop').animate({ bottom: '8%', opacity: '1' });
+                setTimeout(function () {
+                    $('.pop').animate({ bottom: '2%', opacity: '0' });
+                }, 1000)
+            }
         }
     },
     mounted() {
         window.mainPage = this;
         this.putPicture();
         this.changeCardColor();
+        $('.toolbar').each((index, toolbar) => {
+            $(toolbar).css({
+                'background': getRandomCardColor('135deg', '0.3'),
+                'transition': 'all 500ms'
+            });
+        })
 
     }
 

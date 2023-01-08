@@ -235,4 +235,49 @@
     border-radius: 10px;
     margin-top: 6%;
     box-shadow: 0 2px 8px rgba(14, 21, 47, 0.25);
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-content: space-around;
+}
+.rightPanel >.toolbar{
+    background-color: rgba(255, 255, 255, 0.5);
+    width: 50px;
+    height: 50px;
+    background-size: contain;
+    border-radius: 25px;
+    box-shadow: 1px 1px 10px rgba(14, 21, 47, 0.25);
+    transform: all 500ms;
+}
+.rightPanel >.toolbar:hover{
+    transform: scale(1.2,1.2);
+    cursor: pointer;
+}
+.toolbarIcon{
+    width: 100%;
+    opacity: 0.7;
+}
+/* 文字提示小弹窗 */
+.pop{
+    width: 160px;
+    height: 30px;
+    border-radius: 10px;
+    position: fixed;
+    bottom: 2%;
+    left: 40%;
+    background-color: white;
+    display: none;
+    opacity: 0;
+}
+.pop > .popText{
+    width: 80%;
+    font-size: 14px;
+    float: left;
+    line-height: 30px;
+}
+.pop > .popImg{
+   width: 20%;
+   height: 100%;
+   /* background-color: red; */
+   float: left;
 }

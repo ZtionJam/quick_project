@@ -17,10 +17,10 @@
         <img id="backImg" src="../img/icon/返回.png" width="16px" alt="">
       </div>
       <div class="titleText">{{title}}</div>
-      <div class="closeIcon" v-on:click="close">
+      <div class="closeIcon" v-on:click="close" title="关闭">
         <img id="closeImg" src="../img/icon/关闭.png" width="16px" alt="">
       </div>
-      <div class="minimizeIcon" v-on:click="minimize">
+      <div class="minimizeIcon" v-on:click="minimize" title="最小化">
         <img id="closeImg" src="../img/icon/最小化.png" width="16px" alt="">
       </div>
     </div>
@@ -42,40 +42,48 @@
         <div class="card" v-for="(item,index) in card" :key="index">
           <!-- 卡片标题栏目 -->
           <div class="title">
-            <input class="titleInput" type="text" :value="item.title">
-            <div v-on:click="copyCard" class="copyCard" title="复制卡片信息"></div>
+            <input class="titleInput" type="text" v-model="item.title">
+            <div v-on:click="copyCard(item)" class="copyCard" title="复制卡片信息"></div>
           </div>
           <!-- 记录项 -->
           <div class="dataBox" v-for="(elem,index) in item.data" :key="index">
             <div class="nameBox">
-              <input class="dataName" type="text" :value="elem.name">
+              <input class="dataName" type="text" v-model="elem.name">
             </div>
             <div class="valueBox">
-              <input class="projectNameText valueInput" type="text" :value="elem.value">
-              <div class="copyCard" title="复制值"></div>
+              <input class="projectNameText valueInput" type="text" v-model="elem.value">
+              <div v-on:click="copyStr(elem.value)" class="copyCard" title="复制值"></div>
             </div>
           </div>
         </div>
-        <!-- <waterfall class="projectCards" :line-gap="200" :watch="items">
-          <waterfall-slot class="card" style="display: inline-block;" v-for="(item, index) in card" :width="item.width"
-            ::height="item.hight" :order="index" :key="index">
-            <div class="title">{{item.title}}</div>
-            <div class="dataBox" v-for="(elem,index) in item.data" :key="index">
-              <div class="nameBox">
-                <input class="dataName" type="text" :value="elem.name">
-              </div>
-              <div class="valueBox">
-                <input class="projectNameText" type="text" :value="elem.value">
-              </div>
-            </div>
-          </waterfall-slot>
-          </waterfall-slot>
-        </waterfall> -->
 
       </div>
-      <div class="rightPanel" v-on:click="changeCardColor"> </div>
+      <div class="rightPanel">
+        <div title="换套颜色" class="toolbar" v-on:click="changeCardColor">
+          <img class="toolbarIcon" src="../img/icon/刷新2.png" alt="">
+        </div>
+        <div title="添加卡片" class="toolbar">
+          <img class="toolbarIcon" src="../img/icon/新增.png" alt="">
+        </div>
+        <div title="全局编辑" class="toolbar">
+          <img class="toolbarIcon" src="../img/icon/编辑.png" alt="">
+        </div>
+        <div title="打开项目文件夹" class="toolbar">
+          <img class="toolbarIcon" src="../img/icon/文件夹.png" alt="">
+        </div>
+        <div title="导出项目信息" class="toolbar">
+          <img class="toolbarIcon" src="../img/icon/导出.png" alt="">
+        </div>
+        <div title="帮助" class="toolbar">
+          <img class="toolbarIcon" src="../img/icon/帮助.png" alt="">
+        </div>
+      </div>
     </div>
-
+    <!-- 提示弹窗 -->
+    <div class="pop">
+      <div class="popImg"><img width="30px" src="../img/icon/ok.png" alt=""></div>
+      <div class="popText">已经复制到剪切板</div>
+    </div>
   </div>
   <script src="../js/project.js"></script>
   <script src="../js/jquery.js"></script>
