@@ -41,6 +41,7 @@ body{
     background: url('../img/bg-01.jpg');
     border-radius: 10px;
     display: none;
+    transition: all 1s;
 }
 
 .projectCards {

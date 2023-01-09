@@ -51,11 +51,11 @@
             <div v-on:click="copyCard(item)" class="copyCard" title="复制卡片信息"></div>
           </div>
           <!-- 记录项 -->
-          <div class="dataBox" v-for="(elem,index) in item.data" :key="index">
+          <div class="dataBox textBox" v-for="(elem,index) in item.data" :key="index">
             <div class="nameBox">
               <input class="dataName" type="text" v-model="elem.name">
             </div>
-            <div class="valueBox">
+            <div class="valueBox textBox" >
               <input class="projectNameText valueInput" type="text" v-model="elem.value">
               <div v-on:click="copyStr(elem.value)" class="copyCard" title="复制值"></div>
             </div>

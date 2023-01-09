@@ -176,9 +176,11 @@
     margin: 0 auto;
     width: 85%;
 }
-.projectInfoInput::-webkit-input-placeholder{
+
+.projectInfoInput::-webkit-input-placeholder {
     font-size: 13px;
 }
+
 /* 项目名字和时间的input悬浮 */
 .projectNameText:hover {
     cursor: text;
@@ -260,7 +262,7 @@
 
 /* 添加窗口 */
 .addForm {
-    min-height: 200px;
+    height: 250px;
     width: 320px;
     background-color: #f3f3f3;
     position: fixed;
@@ -272,9 +274,11 @@
     user-select: none;
     transition: all 500ms;
 }
-.addForm:hover{
-    transform: scale(1.1,1.1);
+
+.addForm:hover {
+    transform: scale(1.1, 1.1);
 }
+
 .addFormTitlebar {
     width: 100%;
     height: 30px;
@@ -297,17 +301,20 @@
     transform: scale(1.3, 1.3);
     transition: all 500ms;
 }
-.addFormProjectName{
+
+.addFormProjectName {
     margin-top: 5px;
 }
-.addFormTileText{
+
+.addFormTileText {
     width: 50%;
     font-size: 14px;
     text-indent: 10px;
     line-height: 30px;
     float: left;
 }
-.chooseLogoText{
+
+.chooseLogoText {
     font-size: 13px;
     line-height: 90px;
     text-align: center;
@@ -315,12 +322,18 @@
     background-color: rgba(255, 255, 255, 0.5);
     transition: all 510ms;
 }
-.chooseLogoText:hover{
+
+.chooseLogoText:hover {
     width: 100px;
     height: 100px;
     /* background-color: rgba(19, 19, 19, 0.5); */
 }
-
+.textBox{
+    transition: all 500ms;
+}
+.textBox:hover{
+    transform: scale(1.03,1.03);
+}
 
 
 

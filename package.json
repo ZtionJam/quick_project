@@ -28,5 +28,19 @@
     "type": "git",
     "url": "http://git.ztion.cn/Ztion/quick_project.git"
   },
-  "keywords": []
+  "keywords": [],
+  "build": {
+    "productName": "electron-demo",
+    "directories": {
+      "output": "dist"
+    },
+    "nsis": {
+      "oneClick": false,
+      "allowToChangeInstallationDirectory": true
+    },
+    "win": {
+      "target": "nsis",
+      "icon": "public/icons/icon.ico"
+    }
+  }
 }
