@@ -1,43 +1,41 @@
-
 const { ipcRenderer } = require('electron');
-const { port1, port2 } = new MessageChannel();
+const path = require('path')
+const { db, dbEx } = require(path.join(__dirname + "/sqlite/", 'sqlite'))
+
 var $ = require('jquery');
 var app = new Vue({
     el: '#box',
     data: {
         title: '首页',
-        projects: [
-            {
-                id: '1',
-                projectName: '阿里巴巴开发项目',
-                projectTime: '2022-12-31',
-            }, {
-                id: '2',
-                projectName: '腾讯导航项目',
-                projectTime: '2022-8-31',
-            }, {
-                id: '3',
-                projectName: '项目信息管理项目',
-                projectTime: '2022-8-31',
-            }, {
-                id: '4',
-                projectName: '项目信息管理项目',
-                projectTime: '2022-8-31',
-            }, {
-                id: '5',
-                projectName: '项目信息管理项目',
-                projectTime: '2022-8-31',
-            }, {
-                id: '6',
-                projectName: '项目信息管理项目',
-                projectTime: '2022-8-31',
-            }
-        ]
+        addFrom:{
+            projectName:'',
+            projectTime: '',
+            sort: '',
+        },
+        projects: []
     },
-    mounted() {
+    async created() {
+        var sql = "select * from project";
+        console.log(1111)
+        await dbEx.each(sql, (row) => {
+            var project = {
+                id: row.id,
+                projectName: row.projectName,
+                projectTime: row.projectTime
+            }
+            this.projects.push(project)
+        })
+        this.atvImg()
+        console.log("数据加载完成")
+    },
+    async mounted() {
+        //渲染卡片
         this.atvImg()
     },
     methods: {
+        addProject(){
+
+        },
         selectImage() {
             var inputObj = document.createElement('input')
             inputObj.setAttribute('id', 'my_inputObj');
@@ -54,7 +52,7 @@ var app = new Vue({
         },
         putLogo(e) {
             var file = e.target.files[0];
-            const url=URL.createObjectURL(file)
+            const url = URL.createObjectURL(file)
             $("#addFormLogo").css({
                 'background': 'url("' + url + '")',
                 'background-size': 'cover'

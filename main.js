@@ -1,24 +1,14 @@
 const { Menu, app, BrowserWindow, ipcRenderer, ipcMain } = require('electron')
 // Menu.setApplicationMenu(null)
 require("@electron/remote/main").initialize();
+const path = require('path')
 const sqlite3 = require("sqlite3").verbose();
-//dbPath为你想存放数据库文件的目录路径
-const db = new sqlite3.Database('./data', (err) => {
-    if (err) throw err;
-    console.log('sqlite链接成功')
-})
+const { dbEx } = require('./src/sqlite/sqlite')
 
-var sqlStr = "select * from config where key = 'version' ";
-db.serialize(() => {
-    var ret = db.each(sqlStr, function (err, row) {
-        console.log(row.key + ": " + row.value);
-    });
-})
+// var version = dbEx.getConfig('version');
+// console.log("启动版本:" + version.value);
 
-//自定义数据库路径
-// const userDbPath = path.join(__dirname, "data");
-
-const createWindow = () => {
+const createWindow = async () => {
     const win = new BrowserWindow({
         width: 800,
         height: 600,
@@ -64,8 +54,7 @@ const createWindow = () => {
 
 
     //打开开发工具
-    // win.webContents.openDevTools();
-
+    win.webContents.openDevTools();
 }
 
 app.whenReady().then(() => {
