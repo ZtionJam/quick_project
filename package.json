@@ -20,27 +20,15 @@
   },
   "dependencies": {
     "@electron/remote": "^2.0.9",
+    "aws-sdk": "^2.1292.0",
     "electron-squirrel-startup": "^1.0.0",
     "jquery": "^3.6.3",
+    "sqlite3": "^5.1.4",
     "vue-waterfall": "^1.0.6"
   },
   "repository": {
     "type": "git",
     "url": "http://git.ztion.cn/Ztion/quick_project.git"
   },
-  "keywords": [],
-  "build": {
-    "productName": "electron-demo",
-    "directories": {
-      "output": "dist"
-    },
-    "nsis": {
-      "oneClick": false,
-      "allowToChangeInstallationDirectory": true
-    },
-    "win": {
-      "target": "nsis",
-      "icon": "public/icons/icon.ico"
-    }
-  }
+  "keywords": []
 }
