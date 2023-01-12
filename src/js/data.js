@@ -7,35 +7,74 @@ var app = new Vue({
     el: '#box',
     data: {
         title: '首页',
-        addFrom:{
-            projectName:'',
+        addFrom: {
+            projectName: '',
             projectTime: '',
+            projectLogo: '',
             sort: '',
         },
         projects: []
     },
     async created() {
-        var sql = "select * from project";
+        //加载数据
+        var sql = "select * from project order by sort desc";
         console.log(1111)
         await dbEx.each(sql, (row) => {
             var project = {
                 id: row.id,
                 projectName: row.projectName,
-                projectTime: row.projectTime
+                projectTime: row.projectTime,
+                projectLogo: row.projectLogo
             }
             this.projects.push(project)
         })
         this.atvImg()
-        console.log("数据加载完成")
     },
     async mounted() {
         //渲染卡片
-        this.atvImg()
+        // this.atvImg()
     },
     methods: {
-        addProject(){
-
+        //数组排序
+        sort(urlList) {
+            for (var i = 0; i <= urlList.length - 2; i++) {
+                for (var j = i + 1; j <= urlList.length - 1; j++) {
+                    if (urlList[j].ind < urlList[i].ind) {
+                        var num = urlList[j];
+                        urlList[j] = urlList[i]
+                        urlList[i] = num
+                    }
+                }
+            }
         },
+        async addProject() {
+            var sql = `INSERT INTO 
+            project ( "id", "projectName", "projectTime", "projectLogo", "sort" )
+            VALUES( '${Date.now()}', '${this.addFrom.projectName}', '${this.addFrom.projectTime}', '${this.addFrom.projectLogo}', '${this.addFrom.sort}' );`;
+            await dbEx.insert(sql);
+            //新增默认放到第一个
+            this.projects.unshift(this.addFrom);
+            //dom更新后渲染新的卡片
+            this.$nextTick(() => {
+                this.atvImg();
+                this.closeAddForm();
+                //清楚新增页面的数据
+                setTimeout(() => {
+                    this.addFrom = {
+                        id: '',
+                        projectName: '',
+                        projectTime: '',
+                        projectLogo: ''
+                    };
+                    $("#addFormLogo").css({
+                        'background': 'url(\'./img/头像.jpg\')',
+                        'background-size': 'cover'
+                    });
+                }, 1000)
+
+            })
+        },
+        //本地上传图片
         selectImage() {
             var inputObj = document.createElement('input')
             inputObj.setAttribute('id', 'my_inputObj');
@@ -50,33 +89,64 @@ var app = new Vue({
 
             inputObj.click();
         },
-        putLogo(e) {
+        //存放图片
+        async putLogo(e) {
             var file = e.target.files[0];
             const url = URL.createObjectURL(file)
+            var str=await this.readImgToBase64(file);
+            this.addFrom.projectLogo = str;
             $("#addFormLogo").css({
-                'background': 'url("' + url + '")',
+                'background': 'url("' + str + '")',
                 'background-size': 'cover'
             });
         },
+        //打开项目
         openProject(event) {
 
             ipcRenderer.send("openProject", "openProject")
         },
+        //关闭窗口
         close(event) {
             ipcRenderer.send("closeApp", "closeApp")
         },
+        //打开添加窗口
         openAddForm(event) {
             $('.addForm').css({ 'background': getRandomCardColor('135deg', '1'), });
             $('.shadowMock').fadeIn(400);
             $('.addForm').fadeIn(400);
         },
+        //关闭添加窗口
         closeAddForm(event) {
-            $('.shadowMock').fadeOut(200);
-            $('.addForm').fadeOut(200);
+            $('.shadowMock').fadeOut(300);
+            $('.addForm').fadeOut(300);
         },
+        //最小化
         minimize(event) {
             ipcRenderer.send("minApp", "minApp")
         },
+        readImgToBase64(file) {
+            return new Promise((resolve, reject) => {
+                try {
+
+                    // 读取信息
+                    const reader = new FileReader();
+                    reader.readAsDataURL(file);
+                    reader.onload = () => {
+                        // 转base64结果
+                        const base64Url = reader.result;
+                        resolve(base64Url);
+                    }
+
+                    reader.onerror = (err) => {
+                        reject(err);
+                    }
+
+                } catch (error) {
+                    reject(error);
+                }
+            });
+        },
+        //渲染卡片
         atvImg() {
             var d = document,
                 de = d.documentElement,
@@ -134,8 +204,16 @@ var app = new Vue({
                 containerHTML.appendChild(doms[0]);
 
                 thisImg.insertBefore(containerHTML, thisImg.children[0])
-
-                // thisImg.appendChild(containerHTML);
+                $(".pLogo").each((index,item)=>{
+                    var index=$(item).attr('index');
+                    var logo=this.projects[index].projectLogo;
+                    if(logo!=null){
+                        $(item).css({
+                            background:'url('+logo+')',
+                            backgroundSize: 'cover'
+                        })
+                    }
+                })
 
                 var w = thisImg.clientWidth || thisImg.offsetWidth || thisImg.scrollWidth;
                 thisImg.style.transform = 'perspective(' + w * 3 + 'px)';

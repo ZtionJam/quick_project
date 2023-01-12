@@ -36,15 +36,29 @@ const dbEx = {
   },
   //查询
   each: (query, action) => {
-    return new Promise(function (resolve, reject) {
-      db.serialize(function () {
-        db.each(query, function (err, row) {
+    return new Promise((resolve, reject) => {
+      db.serialize(() => {
+        db.each(query, (err, row) => {
           if (err) reject("Read error: " + err.message)
           else {
             if (row) {
               action(row)
               resolve(true)
             }
+          }
+        })
+      })
+    })
+  },
+  //插入
+  insert: (query) => {
+    return new Promise((resolve, reject) => {
+      db.serialize(() => {
+        db.run(query, (err) => {
+          if (err) {
+            reject("Read error: " + err.message)
+          } else {
+            resolve(true)
           }
         })
       })
