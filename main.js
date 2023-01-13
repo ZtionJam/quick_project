@@ -1,12 +1,29 @@
 const { Menu, app, BrowserWindow, ipcRenderer, ipcMain } = require('electron')
 // Menu.setApplicationMenu(null)
 require("@electron/remote/main").initialize();
-const path = require('path')
-const sqlite3 = require("sqlite3").verbose();
-const { dbEx } = require('./src/sqlite/sqlite')
+const path = require('path');
+const fs = require('fs')
+var runPath = process.cwd().toString();
+var logPath = runPath + "/log/run.log";
+//日志文件
+if (!fs.existsSync(runPath + "/log/run.log")) {
+    fs.mkdir(runPath + "/log/", (err) => { });
+    fs.writeFileSync(runPath + "/log/run.log", "QuickPriject\n", (err) => {
+    });
+    log('创建日志文件');
+}
+//检查数据库文件
+if (!fs.existsSync(runPath + "/data/data")) {
+    fs.mkdir(runPath + "/data/", (err) => { 
+        if(err){
+            log("创建数据库文件失败！！！",err.message)
+        }
+    });
+    // fs.copyFileSync('./data/data', runPath + "/data/data"); 
+    log('创建数据文件');
+}
 
-// var version = dbEx.getConfig('version');
-// console.log("启动版本:" + version.value);
+
 
 const createWindow = async () => {
     const win = new BrowserWindow({
@@ -22,7 +39,8 @@ const createWindow = async () => {
             enableRemoteModule: true
         }
     })
-    require("@electron/remote/main").enable(win.webContents);
+
+    // require("@electron/remote/main").enable(win.webContents);
 
     win.loadFile('./src/index.html')
 
@@ -54,9 +72,30 @@ const createWindow = async () => {
 
 
     //打开开发工具
-    win.webContents.openDevTools();
+    // win.webContents.openDevTools();
+    log("启动完成")
 }
 
 app.whenReady().then(() => {
     createWindow()
 })
+
+function log(str) {
+
+    fs.appendFile(logPath, `-----${getCurrentTime()}---` + str + "\n", "utf8", (err) => { });
+}
+
+function getCurrentTime() {
+    var date = new Date();//当前时间
+    var year = date.getFullYear() //返回指定日期的年份
+    var month = date.getMonth() + 1;//月
+    var day = date.getDate();//日
+    var hour = (date.getHours());//时
+    var minute = (date.getMinutes());//分
+    var second = (date.getSeconds());//秒
+
+    //当前时间 
+    var curTime = year + "-" + month + "-" + day
+        + " " + hour + ":" + minute + ":" + second;
+    return curTime;
+}

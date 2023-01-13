@@ -6,25 +6,24 @@
   "scripts": {
     "start": "electron-forge start",
     "package": "electron-forge package",
-    "make": "electron-forge make"
+    "make": "electron-forge make",
+    "packag e-win": "electron-packager ./ QuickProject --overwrite --platform=win32 --asar --out=app --prune=true --icon=./icon.ico"
   },
   "author": "ztion",
   "license": "ISC",
   "devDependencies": {
-    "@electron-forge/cli": "^6.0.4",
-    "@electron-forge/maker-deb": "^6.0.4",
-    "@electron-forge/maker-rpm": "^6.0.4",
-    "@electron-forge/maker-squirrel": "^6.0.4",
-    "@electron-forge/maker-zip": "^6.0.4",
-    "electron": "^22.0.0"
+    "electron": "^22.0.0",
+    "electron-packager": "^17.1.1"
   },
   "dependencies": {
     "@electron/remote": "^2.0.9",
-    "aws-sdk": "^2.1292.0",
-    "electron-squirrel-startup": "^1.0.0",
+    "@mapbox/node-pre-gyp": "^1.0.10",
+    "agent-base": "^6.0.2",
+    "debug": "^4.3.4",
+    "detect-libc": "^2.0.1",
+    "https-proxy-agent": "^5.0.1",
     "jquery": "^3.6.3",
-    "sqlite3": "^5.1.4",
-    "vue-waterfall": "^1.0.6"
+    "sqlite3": "^5.1.4"
   },
   "repository": {
     "type": "git",

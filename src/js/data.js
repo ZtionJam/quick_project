@@ -18,7 +18,6 @@ var app = new Vue({
     async created() {
         //加载数据
         var sql = "select * from project order by sort desc";
-        console.log(1111)
         await dbEx.each(sql, (row) => {
             var project = {
                 id: row.id,
