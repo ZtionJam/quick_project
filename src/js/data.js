@@ -26,12 +26,13 @@ var app = new Vue({
                 projectLogo: row.projectLogo
             }
             this.projects.push(project)
+            this.atvImg()
+            this.$nextTick(()=>{
+                this.atvImg();
+            })
         })
-        this.atvImg()
     },
     async mounted() {
-        //渲染卡片
-        // this.atvImg()
     },
     methods: {
         //数组排序
@@ -92,7 +93,7 @@ var app = new Vue({
         async putLogo(e) {
             var file = e.target.files[0];
             const url = URL.createObjectURL(file)
-            var str=await this.readImgToBase64(file);
+            var str = await this.readImgToBase64(file);
             this.addFrom.projectLogo = str;
             $("#addFormLogo").css({
                 'background': 'url("' + str + '")',
@@ -155,7 +156,7 @@ var app = new Vue({
                 imgs = d.querySelectorAll('.atvImg'),
                 totalImgs = imgs.length,
                 supportsTouch = 'ontouchstart' in win || navigator.msMaxTouchPoints;
-
+            console.log("卡片数量：" + totalImgs);
             if (totalImgs <= 0) {
                 return;
             }
@@ -203,12 +204,12 @@ var app = new Vue({
                 containerHTML.appendChild(doms[0]);
 
                 thisImg.insertBefore(containerHTML, thisImg.children[0])
-                $(".pLogo").each((index,item)=>{
-                    var index=$(item).attr('index');
-                    var logo=this.projects[index].projectLogo;
-                    if(logo!=null){
+                $(".pLogo").each((index, item) => {
+                    var index = $(item).attr('index');
+                    var logo = this.projects[index].projectLogo;
+                    if (logo != null) {
                         $(item).css({
-                            background:'url('+logo+')',
+                            background: 'url(' + logo + ')',
                             backgroundSize: 'cover'
                         })
                     }
