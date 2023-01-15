@@ -36,27 +36,29 @@
       <div class="projectCards">
 
         <div class="card projectInfo">
-          <div class="projectLogo" title="logo" style="background: url('../img/头像.jpg');background-size: cover;"></div>
+          <div class="projectLogo" title="logo" :style="{background: 'url('+project.projectLogo+')'}"></div>
           <div class="projectName" title="项目名字">
-            <input class="projectNameText projectInfoInput" type="text" v-model="project.projectName" />
+            <input spellcheck="false" class="projectNameText projectInfoInput" type="text"
+              v-model="project.projectName" />
           </div>
           <div class="projectTime" title="项目开始时间">
-            <input class="projectNameText projectInfoInput" type="text" v-model="project.projectTime"/>
+            <input spellcheck="false" class="projectNameText projectInfoInput" type="text"
+              v-model="project.projectTime" />
           </div>
         </div>
         <div class="card" v-for="(item,index) in card" :key="index">
           <!-- 卡片标题栏目 -->
           <div class="title">
-            <input class="titleInput" type="text" v-model="item.title">
+            <input spellcheck="false" class="titleInput" type="text" v-model="item.title">
             <div v-on:click="copyCard(item)" class="copyCard" title="复制卡片信息"></div>
           </div>
           <!-- 记录项 -->
           <div class="dataBox textBox" v-for="(elem,index) in item.data" :key="index">
             <div class="nameBox">
-              <input class="dataName" type="text" v-model="elem.name">
+              <input spellcheck="false" class="dataName" type="text" v-model="elem.name">
             </div>
-            <div class="valueBox textBox" >
-              <input class="projectNameText valueInput" type="text" v-model="elem.value">
+            <div class="valueBox textBox">
+              <input spellcheck="false" class="projectNameText valueInput" type="text" v-model="elem.value">
               <div v-on:click="copyStr(elem.value)" class="copyCard" title="复制值"></div>
             </div>
           </div>
@@ -67,7 +69,7 @@
         <div title="换套颜色" class="toolbar" v-on:click="changeCardColor">
           <img class="toolbarIcon" src="../img/icon/刷新2.png" alt="">
         </div>
-        <div title="添加卡片" class="toolbar">
+        <div title="添加卡片" class="toolbar" v-on:click="openAddForm">
           <img class="toolbarIcon" src="../img/icon/新增.png" alt="">
         </div>
         <div title="全局编辑" class="toolbar">
@@ -89,6 +91,8 @@
       <div class="popImg"><img width="30px" src="../img/icon/ok.png" alt=""></div>
       <div class="popText">已经复制到剪切板</div>
     </div>
+    <!-- 阴影遮罩 -->
+    <div class="shadowMock"></div>
   </div>
   <script src="../js/project.js"></script>
   <script src="../js/jquery.js"></script>

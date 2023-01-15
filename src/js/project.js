@@ -17,7 +17,7 @@ var app = new Vue({
             id: '1',
             projectName: '加载中',
             projectTime: '2022-12-31',
-            projectLogo: '',
+            projectLogo: '../img/头像.jpg',
             sort: ''
         },
         card: []
@@ -35,7 +35,7 @@ var app = new Vue({
                 id: row.id,
                 projectName: row.projectName,
                 projectTime: row.projectTime,
-                projectLogo: row.projectLogo
+                projectLogo: row.projectLogo||'../img/头像.jpg'
             }
             this.project = projectData;
             this.title = row.projectName
@@ -55,7 +55,6 @@ var app = new Vue({
                     value: ret.value
                 };
                 card.data.push(data)
-                console.log(data)
             })
             this.card.push(card)
             this.$nextTick(() => {
@@ -77,15 +76,19 @@ var app = new Vue({
             });
         })
         //头像
-        if (this.project.projectLogo!=null) {
-            $(".projectLogo").css({
-                'background': 'url("' + this.project.projectLogo + '")',
-                'background-size': 'cover'
-            });
-        }
+        console.log(this.project.projectLogo)
+        // if (this.project.projectLogo!=null) {
+        //     $(".projectLogo").css({
+        //         'background': 'url("' + this.project.projectLogo + '")',
+        //         'background-size': 'cover'
+        //     });
+        // }
 
     },
     methods: {
+        openAddForm(){
+            $('.shadowMock').fadeIn(400);
+        },
         backIndex() {
             ipcRenderer.send("backIndex", "backIndex")
         },

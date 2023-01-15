@@ -129,6 +129,7 @@
     float: left;
     box-shadow: 0 2px 8px rgba(14, 21, 47, 0.25);
     transition: all 500ms;
+    background-size: cover !important;
 }
 
 /* logo悬浮 */
@@ -255,7 +256,7 @@
     position: fixed;
     left: 8px;
     top: 0;
-    opacity: 0.3;
+    opacity: 0.4;
     border-radius: 10px;
     display: none;
 }
