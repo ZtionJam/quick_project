@@ -38,10 +38,10 @@
         <div class="card projectInfo">
           <div class="projectLogo" title="logo" style="background: url('../img/头像.jpg');background-size: cover;"></div>
           <div class="projectName" title="项目名字">
-            <input class="projectNameText projectInfoInput" type="text" :value="project.projectName" />
+            <input class="projectNameText projectInfoInput" type="text" v-model="project.projectName" />
           </div>
           <div class="projectTime" title="项目开始时间">
-            <input class="projectNameText projectInfoInput" type="text" :value="project.projectTime"/>
+            <input class="projectNameText projectInfoInput" type="text" v-model="project.projectTime"/>
           </div>
         </div>
         <div class="card" v-for="(item,index) in card" :key="index">

@@ -1,7 +1,10 @@
 
-const { ipcRenderer } = require('electron')
-const { port1, port2 } = new MessageChannel()
-var $ = require('jquery')
+const { ipcRenderer } = require('electron');
+const { port1, port2 } = new MessageChannel();
+var $ = require('jquery');
+const storage = require('electron-localstorage');
+const path = require('path')
+const { db, dbEx } = require(path.join(__dirname + "/../sqlite/", 'sqlite'));
 
 var app = new Vue({
     el: '#box',
@@ -9,145 +12,77 @@ var app = new Vue({
 
     },
     data: {
-        title: '测试项目',
+        title: '加载中',
         project: {
             id: '1',
-            projectName: '阿里巴巴开发项目',
-            projectTime: '2022-12-31'
+            projectName: '加载中',
+            projectTime: '2022-12-31',
+            projectLogo: '',
+            sort: ''
         },
-        card: [
-            {
-                title: "测试数据库",
-                data: [
-                    {
-                        name: "数据库地址",
-                        value: "192.168.2.2"
-                    },
-                    {
-                        name: "账号",
-                        value: "Tencent"
-                    },
-                    {
-                        name: "密码",
-                        value: "root"
-                    }
-
-                ]
-            },
-            {
-                title: "Nacos",
-                data: [
-                    {
-                        name: "地址",
-                        value: "192.168.2.2:8848"
-                    },
-                    {
-                        name: "账号",
-                        value: "Nacos"
-                    },
-                    {
-                        name: "密码",
-                        value: "root1234"
-                    }
-
-                ]
-            },
-            {
-                title: "工作安排",
-                data: [
-                    {
-                        name: "地址",
-                        value: "https://v.qq.com/"
-                    }
-
-                ]
-            },
-            {
-                title: "墨刀原型图",
-                data: [
-                    {
-                        name: "地址",
-                        value: "https://modao.cc/feature/prototype/"
-                    }
-
-                ]
-            },
-            {
-                title: "小程序信息",
-                data: [
-                    {
-                        name: "AppID",
-                        value: "h32j426h3j5747h2h22"
-                    },
-                    {
-                        name: "AppSecret",
-                        value: "12312h1j5j5j35ho2o3p2"
-                    }
-
-                ]
-            },
-            {
-                title: "RabbitMQ",
-                data: [
-                    {
-                        name: "地址",
-                        value: "https://v.qq.com/"
-                    },
-                    {
-                        name: "账号",
-                        value: "admin"
-                    },
-                    {
-                        name: "密码",
-                        value: "admin123"
-                    }
-
-                ]
-            },
-            {
-                title: "Git地址",
-                data: [
-                    {
-                        name: "后台JAVA",
-                        value: "https://v.qq.com/"
-                    },
-                    {
-                        name: "前端",
-                        value: "https://v.qq.com/"
-                    }
-
-                ]
-            },
-            {
-                title: "蓝湖",
-                data: [
-                    {
-                        name: "地址",
-                        value: "https://v.qq.com/"
-                    }
-
-                ]
-            },
-            {
-                title: "服务器",
-                data: [
-                    {
-                        name: "IP",
-                        value: "192.168.1.1"
-                    },
-                    {
-                        name: "用户名",
-                        value: "root"
-                    },
-                    {
-                        name: "密码",
-                        value: "root123"
-                    }
-
-                ]
+        card: []
+    },
+    async created() {
+        var id = storage.getItem('projectId');
+        if (!id) {
+            alert("参数不正确！！")
+            this.backIndex()
+        }
+        //加载项目信息
+        var psql = `select * from project where id =${id}  order by sort desc`;
+        await dbEx.each(psql, (row) => {
+            var projectData = {
+                id: row.id,
+                projectName: row.projectName,
+                projectTime: row.projectTime,
+                projectLogo: row.projectLogo
             }
+            this.project = projectData;
+            this.title = row.projectName
+        })
+        //加载卡片
+        var csql = `select * from card where projectId =${id}  order by sort desc`;
+        await dbEx.each(csql, async (row) => {
+            var card = {
+                title: row.title,
+                data: []
+            };
+            //加载卡片的数据
+            var dsql = `select * from data where cardId =${row.id}  order by sort desc`;
+            await dbEx.each(dsql, (ret) => {
+                var data = {
+                    name: ret.name,
+                    value: ret.value
+                };
+                card.data.push(data)
+                console.log(data)
+            })
+            this.card.push(card)
+            this.$nextTick(() => {
+                this.changeCardColor();
+            })
+        })
 
-        ]
+    },
+    mounted() {
+        //瀑布流布局
+        window.mainPage = this;
+        this.putPicture();
+        //刷新一次颜色
+        this.changeCardColor();
+        $('.toolbar').each((index, toolbar) => {
+            $(toolbar).css({
+                'background': getRandomCardColor('135deg', '0.3'),
+                'transition': 'all 500ms'
+            });
+        })
+        //头像
+        if (this.project.projectLogo!=null) {
+            $(".projectLogo").css({
+                'background': 'url("' + this.project.projectLogo + '")',
+                'background-size': 'cover'
+            });
+        }
 
     },
     methods: {
@@ -249,18 +184,6 @@ var app = new Vue({
                 }, 1000)
             }
         }
-    },
-    mounted() {
-        window.mainPage = this;
-        this.putPicture();
-        this.changeCardColor();
-        $('.toolbar').each((index, toolbar) => {
-            $(toolbar).css({
-                'background': getRandomCardColor('135deg', '0.3'),
-                'transition': 'all 500ms'
-            });
-        })
-
     }
 
 })

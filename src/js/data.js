@@ -1,6 +1,7 @@
 const { ipcRenderer } = require('electron');
 const path = require('path')
 const { db, dbEx } = require(path.join(__dirname + "/sqlite/", 'sqlite'))
+const storage = require('electron-localstorage')
 
 var $ = require('jquery');
 var app = new Vue({
@@ -101,9 +102,9 @@ var app = new Vue({
             });
         },
         //打开项目
-        openProject(event) {
-
-            ipcRenderer.send("openProject", "openProject")
+        openProject(id) {
+            storage.setItem("projectId",id);
+            ipcRenderer.send("openProject", id);
         },
         //关闭窗口
         close(event) {

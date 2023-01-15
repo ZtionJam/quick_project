@@ -21,6 +21,7 @@
     "agent-base": "^6.0.2",
     "debug": "^4.3.4",
     "detect-libc": "^2.0.1",
+    "electron-localstorage": "^1.0.5",
     "https-proxy-agent": "^5.0.1",
     "jquery": "^3.6.3",
     "sqlite3": "^5.1.4"
