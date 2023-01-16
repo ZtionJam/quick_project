@@ -24,16 +24,18 @@ var app = new Vue({
                 id: row.id,
                 projectName: row.projectName,
                 projectTime: row.projectTime,
-                projectLogo: row.projectLogo
+                projectLogo: row.projectLogo,
+                sort: row.sort,
             }
             this.projects.push(project)
             this.atvImg()
-            this.$nextTick(()=>{
+            this.$nextTick(() => {
                 this.atvImg();
             })
         })
     },
     async mounted() {
+        this.atvImg();
     },
     methods: {
         //数组排序
@@ -49,6 +51,8 @@ var app = new Vue({
             }
         },
         async addProject() {
+            //参数校验
+            if (!this.addFormDataValid()) return;
             var sql = `INSERT INTO 
             project ( "id", "projectName", "projectTime", "projectLogo", "sort" )
             VALUES( '${Date.now()}', '${this.addFrom.projectName}', '${this.addFrom.projectTime}', '${this.addFrom.projectLogo}', '${this.addFrom.sort}' );`;
@@ -65,15 +69,32 @@ var app = new Vue({
                         id: '',
                         projectName: '',
                         projectTime: '',
-                        projectLogo: ''
+                        projectLogo: '',
+                        sort: '',
                     };
                     $("#addFormLogo").css({
-                        'background': 'url(\'./img/头像.jpg\')',
+                        'background': 'url("./img/头像.jpg")',
                         'background-size': 'cover'
                     });
                 }, 1000)
 
             })
+        },
+        addFormDataValid() {
+            //检查数据
+            if (this.addFrom.projectName.trim().length == 0) {
+                this.pop("标题没填哦")
+                return false;
+            }
+            if (this.addFrom.projectTime.trim().length == 0) {
+                this.pop("时间没填哦")
+                return false;
+            }
+            if (this.addFrom.sort.trim().length == 0) {
+                this.pop("排序号没填哦")
+                return false;
+            }
+            return true;
         },
         //本地上传图片
         selectImage() {
@@ -96,6 +117,7 @@ var app = new Vue({
             const url = URL.createObjectURL(file)
             var str = await this.readImgToBase64(file);
             this.addFrom.projectLogo = str;
+            // if(str)
             $("#addFormLogo").css({
                 'background': 'url("' + str + '")',
                 'background-size': 'cover'
@@ -103,7 +125,7 @@ var app = new Vue({
         },
         //打开项目
         openProject(id) {
-            storage.setItem("projectId",id);
+            storage.setItem("projectId", id);
             ipcRenderer.send("openProject", id);
         },
         //关闭窗口
@@ -120,6 +142,20 @@ var app = new Vue({
         closeAddForm(event) {
             $('.shadowMock').fadeOut(300);
             $('.addForm').fadeOut(300);
+            //清楚新增页面的数据
+            setTimeout(() => {
+                this.addFrom = {
+                    id: '',
+                    projectName: '',
+                    projectTime: '',
+                    projectLogo: '',
+                    sort: '',
+                };
+                $("#addFormLogo").css({
+                    'background': 'url(\'./img/头像.jpg\')',
+                    'background-size': 'cover'
+                });
+            }, 1000)
         },
         //最小化
         minimize(event) {
@@ -147,6 +183,22 @@ var app = new Vue({
                 }
             });
         },
+        pop(text) {
+            //提示弹窗
+            $('.popText').text(text);
+            if ($('.pop').css('bottom') == '2%' || $('.pop').css('bottom') == '12px') {
+                $('.pop').css({
+                    'background': getRandomCardColor('135deg', '0.9'),
+                    'transition': 'all 500ms',
+                    'display': 'block'
+                });
+                //1s后自动回去
+                $('.pop').animate({ bottom: '8%', opacity: '1' });
+                setTimeout(function () {
+                    $('.pop').animate({ bottom: '2%', opacity: '0' });
+                }, 1500)
+            }
+        },
         //渲染卡片
         atvImg() {
             var d = document,
@@ -157,7 +209,7 @@ var app = new Vue({
                 imgs = d.querySelectorAll('.atvImg'),
                 totalImgs = imgs.length,
                 supportsTouch = 'ontouchstart' in win || navigator.msMaxTouchPoints;
-            console.log("卡片数量：" + totalImgs);
+            // console.log("卡片数量：" + totalImgs);
             if (totalImgs <= 0) {
                 return;
             }
@@ -208,7 +260,7 @@ var app = new Vue({
                 $(".pLogo").each((index, item) => {
                     var index = $(item).attr('index');
                     var logo = this.projects[index].projectLogo;
-                    if (logo != null) {
+                    if (logo != null&&logo.length>0) {
                         $(item).css({
                             background: 'url(' + logo + ')',
                             backgroundSize: 'cover'

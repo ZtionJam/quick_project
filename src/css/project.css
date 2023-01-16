@@ -1,6 +1,7 @@
-body{
+body {
     user-select: none;
 }
+
 /* 返回按钮 */
 .backIcon {
     width: 35px;
@@ -185,7 +186,7 @@ body{
 
 .valueBox {
     float: left;
-    min-width: 200px;
+    width: 200px;
     height: 25px;
     font-family: SanJiNengLiang;
     background-color: rgba(255, 255, 255, 0.5);
@@ -246,7 +247,8 @@ body{
     align-content: space-around;
     user-select: none;
 }
-.rightPanel >.toolbar{
+
+.rightPanel>.toolbar {
     background-color: rgba(255, 255, 255, 0.5);
     width: 50px;
     height: 50px;
@@ -255,16 +257,19 @@ body{
     box-shadow: 1px 1px 10px rgba(14, 21, 47, 0.25);
     transform: all 500ms;
 }
-.rightPanel >.toolbar:hover{
-    transform: scale(1.2,1.2);
+
+.rightPanel>.toolbar:hover {
+    transform: scale(1.2, 1.2);
     cursor: pointer;
 }
-.toolbarIcon{
+
+.toolbarIcon {
     width: 100%;
     opacity: 0.7;
 }
+
 /* 文字提示小弹窗 */
-.pop{
+.pop {
     width: 160px;
     height: 30px;
     border-radius: 10px;
@@ -274,16 +279,142 @@ body{
     background-color: white;
     display: none;
     opacity: 0;
+    z-index: 999999;
 }
-.pop > .popText{
+
+.pop>.popText {
     width: 80%;
     font-size: 14px;
     float: left;
     line-height: 30px;
 }
-.pop > .popImg{
-   width: 20%;
-   height: 100%;
-   /* background-color: red; */
-   float: left;
+
+.pop>.popImg {
+    width: 20%;
+    height: 100%;
+    /* background-color: red; */
+    float: left;
+}
+
+/* 添加窗口 */
+.addCardForm {
+    min-height: 200px;
+    width: 320px;
+    background-color: #f3f3f3;
+    position: fixed;
+    left: 30%;
+    top: 30%;
+    border-radius: 10px;
+    box-shadow: 0 2px 8px rgba(14, 21, 47, 0.7) !important;
+    display: none;
+    user-select: none;
+    transition: all 500ms;
+    /* z-index: 999; */
+}
+
+.addTitleDataBox {
+    margin-top: 10px;
+}
+
+.addNameBox {
+    float: left;
+    width: 70px;
+    font-size: 12px;
+    line-height: 25px;
+    height: 25px;
+    text-align: center;
+}
+
+.addTitleBox {
+    float: left;
+    min-width: 200px;
+    height: 25px;
+    font-family: SanJiNengLiang;
+    background-color: rgba(255, 255, 255, 0.5);
+    border-radius: 5px;
+}
+
+.addFormContentBox {
+    width: 100%;
+    min-height: 40px;
+    margin-top: 10px;
+    /* background-color: rebeccapurple; */
+}
+
+.showInputBack {
+    background-color: rgba(255, 255, 255, 0.5);
+    /* width: 100%; */
+    text-align: center;
+}
+
+.addValueBox {
+    width: 50%;
+}
+
+.addFormDataBox {
+    margin-left: 10px;
+}
+
+.addValueInput {
+    width: 95%;
+}
+
+/* 添加窗口的删除按钮 */
+#delData {
+    width: 20px;
+    float: left;
+    margin-left: 4px;
+    margin-top: 2px;
+}
+
+/* 添加框的按钮框 */
+.buttonBox {
+    width: 100%;
+    min-height: 40px;
+    margin-top: 5px;
+}
+
+.buttonCom {
+    width: 25%;
+    height: 25px;
+    background-color: rgba(255, 255, 255, 0.5);
+    float: right;
+    border-radius: 5px;
+    box-shadow: 0 2px 8px rgba(100, 100, 100, 0.7);
+    text-indent: 2px;
+    transition: all 500ms;
+    font-size: 13px;
+    line-height: 25px;
+    margin-right: 20px;
+}
+
+.buttonCom>img {
+    margin-left: 5px;
+    margin-top: 5px;
+    float: left;
+}
+#delData:hover {
+    cursor: pointer;
+}
+.buttonCom:hover {
+    transform: scale(1.1, 1.1);
+    transition: all 500ms;
+    cursor: pointer;
+}
+
+.addFormSavaBtnBox {
+    width: 20%;
+    float: right;
+}
+
+.addFormAddLine {
+    width: 28%;
+}
+.sortBox{
+    width: 13%;
+    float: left;
+    margin-left: 5px;
+}
+.sortInput{
+    width: 100%;
 }

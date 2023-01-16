@@ -20,7 +20,19 @@ var app = new Vue({
             projectLogo: '../img/头像.jpg',
             sort: ''
         },
-        card: []
+        card: [],
+        addFromData: {
+            title: '',
+            sort: '',
+            data: [
+                {
+                    name: '',
+                    value: '',
+                    sort:''
+                }
+            ]
+        }
+
     },
     async created() {
         var id = storage.getItem('projectId');
@@ -35,7 +47,7 @@ var app = new Vue({
                 id: row.id,
                 projectName: row.projectName,
                 projectTime: row.projectTime,
-                projectLogo: row.projectLogo||'../img/头像.jpg'
+                projectLogo: row.projectLogo || '../img/头像.jpg'
             }
             this.project = projectData;
             this.title = row.projectName
@@ -59,9 +71,9 @@ var app = new Vue({
             this.card.push(card)
             this.$nextTick(() => {
                 this.changeCardColor();
+                this.putPicture();
             })
         })
-
     },
     mounted() {
         //瀑布流布局
@@ -75,19 +87,103 @@ var app = new Vue({
                 'transition': 'all 500ms'
             });
         })
-        //头像
-        console.log(this.project.projectLogo)
-        // if (this.project.projectLogo!=null) {
-        //     $(".projectLogo").css({
-        //         'background': 'url("' + this.project.projectLogo + '")',
-        //         'background-size': 'cover'
-        //     });
-        // }
-
     },
     methods: {
-        openAddForm(){
+        //保存添加窗口
+        async savaAdd() {
+            //数据检查
+            if (!this.addFormDataValid()) return;
+            //保存卡片
+            var cardId=Date.now();
+            var csql = `INSERT INTO 
+            card ( "id", "projectId", "title", "sort" )
+            VALUES( '${cardId}', '${storage.getItem('projectId')}', '${this.addFromData.title}', '${this.addFromData.sort}' );`;
+            console.log(csql)
+            await dbEx.insert(csql);
+            this.addFromData.data.forEach(async data => {
+                var dsql = `INSERT INTO 
+                data ( "id", "cardId", "name", "value","type","sort" )
+                VALUES( '${Date.now()+Math.ceil(Math.random()*100)}', '${cardId}', '${data.name}', '${data.value}','text','${data.sort}' );`;
+                console.log(dsql)
+                await dbEx.insert(dsql);
+            });
+            //新增的默认放第一个
+            this.card.unshift(this.addFromData)
+            this.$nextTick(() => {
+                this.changeCardColor();
+                this.putPicture();
+            })
+            this.pop('保存成功！')
+            this.closeAddForm()
+        },
+        addFormDataValid() {
+            //检查数据
+            if (this.addFromData.title.trim().length == 0) {
+                this.pop("标题没填哦")
+                return false;
+            }
+            if (this.addFromData.sort.trim().length == 0) {
+                this.pop("排序号没填哦")
+                return false;
+            }
+            if (this.addFromData.data[0].name.trim().length == 0) {
+                this.pop("数据不能为空哦")
+                return false;
+            }
+            return true;
+        },
+        //关闭添加窗口
+        closeAddForm() {
+            $('.shadowMock').fadeOut(300);
+            $('.addCardForm').fadeOut(300);
+            //重置
+            setTimeout(() => {
+                this.addFromData = {
+                    title: '',
+                    sort: '',
+                    data: [
+                        {
+                            name: '',
+                            value: '',
+                            sort:''
+                        }
+                    ]
+                }
+            }, 1000)
+
+        },
+        // 添加行
+        addLine() {
+            //最多10行
+            if (this.addFromData.data.length >= 10) {
+                this.pop("太多了~装不下啦!")
+                return;
+            }
+            var line = {
+                name: '',
+                value: ''
+            }
+            this.addFromData.data.push(line);
+            $('.addCardForm')
+                .css('top', $('.addCardForm')
+                    .css('top').substring(0, $('.addCardForm')
+                        .css('top').indexOf("px")) - 20 + 'px')
+        },
+        // 删除行
+        delLine(index) {
+            this.addFromData.data.splice(index, 1);
+            $('.addCardForm')
+                .css('top', parseInt($('.addCardForm')
+                    .css('top').substring(0, $('.addCardForm')
+                        .css('top').indexOf("px"))) + 20 + 'px')
+        },
+        openAddForm() {
+
             $('.shadowMock').fadeIn(400);
+            $('.addCardForm').fadeIn(300);
+            $('.addCardForm').css({
+                'background': getRandomCardColor('135deg', '0.95'),
+            });
         },
         backIndex() {
             ipcRenderer.send("backIndex", "backIndex")
@@ -100,7 +196,7 @@ var app = new Vue({
         },
         putPicture() {
             //计算每行数量
-            var box = $('.card');
+            var box = $('.projectCards > .card');
             var boxWidth = box.eq(0).width();
             var documentWidth = $(document).width();
             var num = Math.floor(documentWidth / boxWidth);
@@ -156,7 +252,6 @@ var app = new Vue({
 
         },
         copyCard(item) {
-            console.log(item);
             var cardText = item.title + "\n";
             item.data.forEach(d => {
                 cardText += d.name + ": " + d.value + "\n";
@@ -173,7 +268,11 @@ var app = new Vue({
             document.execCommand('copy');
             document.body.removeChild(newInput);
             //提示弹窗
-            console.log($('.pop').css('bottom'))
+            this.pop('已经复制到剪切板')
+        },
+        pop(text) {
+            //提示弹窗
+            $('.popText').text(text);
             if ($('.pop').css('bottom') == '2%' || $('.pop').css('bottom') == '12px') {
                 $('.pop').css({
                     'background': getRandomCardColor('135deg', '0.9'),
@@ -184,7 +283,7 @@ var app = new Vue({
                 $('.pop').animate({ bottom: '8%', opacity: '1' });
                 setTimeout(function () {
                     $('.pop').animate({ bottom: '2%', opacity: '0' });
-                }, 1000)
+                }, 1500)
             }
         }
     }

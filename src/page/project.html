@@ -93,6 +93,59 @@
     </div>
     <!-- 阴影遮罩 -->
     <div class="shadowMock"></div>
+    <!-- 添加窗口 -->
+    <div class="card addCardForm">
+      <div class="addFormTitlebar" title="关闭窗口">
+        <div class="addFormTileText">添加卡片:</div>
+        <img v-on:click="closeAddForm" id="addFormCloseImg" src="../img/icon/关闭.png" alt="">
+      </div>
+      <div class="dataBox textBox addTitleDataBox">
+        <div class="addNameBox">
+          标题
+        </div>
+        <div class="addTitleBox">
+          <input v-model="addFromData.title" placeholder="请输入标题" spellcheck="false" class="projectNameText valueInput"
+            type="text">
+        </div>
+      </div>
+      <div class="dataBox textBox addTitleDataBox">
+        <div class="addNameBox">
+          排序号
+        </div>
+        <div class="addTitleBox">
+          <input v-model="addFromData.sort" placeholder="请输入排序号" spellcheck="false" class="projectNameText valueInput"
+            type="text">
+        </div>
+      </div>
+      <div class="addFormTitlebar" title="数据">
+        <div class="addFormTileText">内容添加:</div>
+      </div>
+      <!-- 内容添加 -->
+      <div class="addFormContentBox">
+        <div v-for="(item,index) in addFromData.data" class="dataBox textBox addFormDataBox">
+          <div class="nameBox ">
+            <input v-model="item.name" placeholder="名称" spellcheck="false" class="dataName showInputBack" type="text">
+          </div>
+          <div class="valueBox textBox addValueBox">
+            <input v-model="item.value" placeholder="值" spellcheck="false"
+              class="projectNameText valueInput addValueInput" type="text">
+          </div>
+          <div class="nameBox sortBox">
+            <input v-model="item.sort" placeholder="序号" spellcheck="false" class="dataName showInputBack sortInput" type="text">
+          </div>
+          <img v-if="index>0" v-on:click="delLine(index)" :index="index" id="delData" title="删除本行" src="../img/icon/删除.png" alt="">
+        </div>
+      </div>
+      <!-- 按钮框 -->
+      <div class="buttonBox">
+        <div class="buttonCom addFormSavaBtnBox" v-on:click="savaAdd">
+          <img src="../img/icon/保存.png" width="15px" alt="">保存
+        </div>
+        <div class="buttonCom addFormAddLine"  v-on:click="addLine">
+          <img src="../img/icon/添加.png" width="15px" alt="">再加一行
+        </div>
+      </div>
+    </div>
   </div>
   <script src="../js/project.js"></script>
   <script src="../js/jquery.js"></script>

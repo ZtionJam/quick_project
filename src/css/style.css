@@ -335,6 +335,36 @@
 .textBox:hover{
     transform: scale(1.03,1.03);
 }
+/* 文字提示小弹窗 */
+.pop {
+    width: 160px;
+    height: 30px;
+    border-radius: 10px;
+    position: fixed;
+    bottom: 2%;
+    left: 40%;
+    background-color: white;
+    display: none;
+    opacity: 0;
+    z-index: 999999;
+}
+
+.pop>.popText {
+    width: 80%;
+    font-size: 14px;
+    float: left;
+    line-height: 30px;
+}
+
+.pop>.popImg {
+    width: 20%;
+    height: 100%;
+    /* background-color: red; */
+    float: left;
+}
+
+
+
 
 
 
