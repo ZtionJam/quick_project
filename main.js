@@ -72,7 +72,7 @@ const createWindow = async () => {
 
 
     //打开开发工具
-    win.webContents.openDevTools();
+    // win.webContents.openDevTools();
     log("启动完成")
 }
 
