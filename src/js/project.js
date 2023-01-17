@@ -28,7 +28,7 @@ var app = new Vue({
                 {
                     name: '',
                     value: '',
-                    sort:''
+                    sort: ''
                 }
             ]
         }
@@ -56,15 +56,19 @@ var app = new Vue({
         var csql = `select * from card where projectId =${id}  order by sort desc`;
         await dbEx.each(csql, async (row) => {
             var card = {
+                id: row.id,
                 title: row.title,
+                sort: row.sort,
                 data: []
             };
             //加载卡片的数据
             var dsql = `select * from data where cardId =${row.id}  order by sort desc`;
             await dbEx.each(dsql, (ret) => {
                 var data = {
+                    id: ret.id,
                     name: ret.name,
-                    value: ret.value
+                    value: ret.value,
+                    sort: ret.sort
                 };
                 card.data.push(data)
             })
@@ -89,12 +93,74 @@ var app = new Vue({
         })
     },
     methods: {
+        //删除
+        delCard(item,index){
+            alert('开发中')
+        },
+        //保存修改
+        async saveUpdate() {
+            //数据检查
+            if (!this.addFormDataValid()) return;
+            console.log(this.addFromData)
+            if (this.addFromData.id.trim().length < 1) {
+                this.pop('卡片信息残缺，请重启应用！')
+                return;
+            }
+            //先保存卡片信息
+            var csql = `UPDATE "card" 
+                SET "projectId" = '${storage.getItem('projectId')}',
+                "title" = '${this.addFromData.title}',
+                "sort" = ${this.addFromData.sort} 
+                WHERE
+                "id" = '${this.addFromData.id}';`;
+            console.log(csql);
+            await dbEx.update(csql);
+            //清除所有行
+            var ddsql = `delete from data where cardId='${this.addFromData.id}'`;
+            console.log(ddsql)
+            await dbEx.update(ddsql);
+            //插入所有行
+            this.addFromData.data.forEach(async data => {
+                var dataId=Date.now() + Math.ceil(Math.random() * 100);
+                var dsql = `INSERT INTO 
+                data ( "id", "cardId", "name", "value","type","sort" )
+                VALUES( '${dataId}', '${this.addFromData.id}', '${data.name}', '${data.value}','text','${data.sort||0}' );`;
+                data.id=dataId;
+                console.log(dsql)
+                await dbEx.insert(dsql);
+            });
+            var index=storage.getItem('updateIndex')||0;
+            this.card[index]=JSON.parse(JSON.stringify(this.addFromData))
+            this.$forceUpdate()
+            this.$nextTick(() => {
+                this.putPicture();
+            })
+            //关闭
+            this.closeAddForm();
+        },
+        //修改卡片信息
+        async editCard(card,inedx) {
+            storage.setItem("opt", 'update');
+            storage.setItem("updateIndex", inedx);
+            // console.log(card)
+            //打开编辑窗口
+            this.addFromData = JSON.parse(JSON.stringify(card))
+            $('.shadowMock').fadeIn(400);
+            $('.addCardForm').fadeIn(300);
+            $('.addCardForm').css({
+                'background': getRandomCardColor('135deg', '0.95'),
+            });
+        },
         //保存添加窗口
         async savaAdd() {
+            if ('update' == storage.getItem("opt")) {
+                this.saveUpdate()
+                return;
+            }
             //数据检查
             if (!this.addFormDataValid()) return;
             //保存卡片
-            var cardId=Date.now();
+            var cardId = Date.now();
             var csql = `INSERT INTO 
             card ( "id", "projectId", "title", "sort" )
             VALUES( '${cardId}', '${storage.getItem('projectId')}', '${this.addFromData.title}', '${this.addFromData.sort}' );`;
@@ -103,7 +169,7 @@ var app = new Vue({
             this.addFromData.data.forEach(async data => {
                 var dsql = `INSERT INTO 
                 data ( "id", "cardId", "name", "value","type","sort" )
-                VALUES( '${Date.now()+Math.ceil(Math.random()*100)}', '${cardId}', '${data.name}', '${data.value}','text','${data.sort}' );`;
+                VALUES( '${Date.now() + Math.ceil(Math.random() * 100)}', '${cardId}', '${data.name}', '${data.value}','text','${data.sort}' );`;
                 console.log(dsql)
                 await dbEx.insert(dsql);
             });
@@ -122,10 +188,10 @@ var app = new Vue({
                 this.pop("标题没填哦")
                 return false;
             }
-            if (this.addFromData.sort.trim().length == 0) {
-                this.pop("排序号没填哦")
-                return false;
-            }
+            // if (this.addFromData.sort.trim().length == 0) {
+            //     this.pop("排序号没填哦")
+            //     return false;
+            // }
             if (this.addFromData.data[0].name.trim().length == 0) {
                 this.pop("数据不能为空哦")
                 return false;
@@ -136,7 +202,7 @@ var app = new Vue({
         closeAddForm() {
             $('.shadowMock').fadeOut(300);
             $('.addCardForm').fadeOut(300);
-            //重置
+            //重置数据
             setTimeout(() => {
                 this.addFromData = {
                     title: '',
@@ -145,11 +211,16 @@ var app = new Vue({
                         {
                             name: '',
                             value: '',
-                            sort:''
+                            sort: ''
                         }
                     ]
                 }
-            }, 1000)
+            }, 300)
+            //重置添加窗口的位置
+            $('.addCardForm').css({
+                left: '30%',
+                top: '20%'
+            });
 
         },
         // 添加行
@@ -167,7 +238,8 @@ var app = new Vue({
             $('.addCardForm')
                 .css('top', $('.addCardForm')
                     .css('top').substring(0, $('.addCardForm')
-                        .css('top').indexOf("px")) - 20 + 'px')
+                        .css('top').indexOf("px")) - 10 + 'px');
+            // this.putPicture();
         },
         // 删除行
         delLine(index) {
@@ -175,10 +247,10 @@ var app = new Vue({
             $('.addCardForm')
                 .css('top', parseInt($('.addCardForm')
                     .css('top').substring(0, $('.addCardForm')
-                        .css('top').indexOf("px"))) + 20 + 'px')
+                        .css('top').indexOf("px"))) + 10 + 'px')
         },
         openAddForm() {
-
+            storage.setItem("opt", 'add');
             $('.shadowMock').fadeIn(400);
             $('.addCardForm').fadeIn(300);
             $('.addCardForm').css({

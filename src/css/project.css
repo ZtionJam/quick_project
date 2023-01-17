@@ -100,7 +100,7 @@ body {
 
 .card:hover .title>.copyCard {
     display: inline;
-    transform: all 500ms;
+    transition: all 500ms;  
 }
 
 /* 卡片标题 */
@@ -111,7 +111,7 @@ body {
 }
 
 .titleInput {
-    width: 86%;
+    width: 80%;
     height: 25px;
     font-size: 14px;
     text-align: left;
@@ -134,16 +134,18 @@ body {
     background: url('../img//icon/复制.png');
     background-size: cover;
     float: right;
-    width: 20px;
-    height: 20px;
+    width: 18px;
+    height: 18px;
     opacity: 0.6;
-    transform: all 500ms;
+    transition: all 500ms;
     display: none;
+    margin-right: 3px;
 }
 
 .copyCard:hover {
     opacity: 1;
     cursor: pointer;
+    transition: all 500ms;
 }
 
 /* 配置项的第一条往下面一点 */
@@ -303,7 +305,7 @@ body {
     background-color: #f3f3f3;
     position: fixed;
     left: 30%;
-    top: 30%;
+    top: 20%;
     border-radius: 10px;
     box-shadow: 0 2px 8px rgba(14, 21, 47, 0.7) !important;
     display: none;
@@ -417,4 +419,13 @@ body {
 }
 .sortInput{
     width: 100%;
+}
+/* 删除和编辑 */
+.delIcon{
+    background: url('../img//icon/叉.png');
+    background-size: cover;
+}
+.editIcon{
+    background: url('../img//icon/修改.png');
+    background-size: cover;
 }

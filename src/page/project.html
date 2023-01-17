@@ -50,6 +50,8 @@
           <!-- 卡片标题栏目 -->
           <div class="title">
             <input spellcheck="false" class="titleInput" type="text" v-model="item.title">
+            <div v-on:click="delCard(item,index)" class="copyCard delIcon" title="删除卡片"></div>
+            <div v-on:click="editCard(item,index)" class="copyCard editIcon" title="编辑卡片"></div>
             <div v-on:click="copyCard(item)" class="copyCard" title="复制卡片信息"></div>
           </div>
           <!-- 记录项 -->

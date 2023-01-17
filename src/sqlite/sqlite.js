@@ -63,6 +63,21 @@ const dbEx = {
         })
       })
     })
+  },
+  //更新
+  //插入
+  update: (query) => {
+    return new Promise((resolve, reject) => {
+      db.serialize(() => {
+        db.run(query, (err) => {
+          if (err) {
+            reject("Read error: " + err.message)
+          } else {
+            resolve(true)
+          }
+        })
+      })
+    })
   }
 }
 
