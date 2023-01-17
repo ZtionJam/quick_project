@@ -1,4 +1,4 @@
-![image-20230117110916289](https://res.ztion.cn/imgs/1673924957110.png)
+<div align="center"> <img src="https://res.ztion.cn/imgs/1673924957110.png" width = 200 /> </div> </div>
 
 <p align="center">
   Quick_Project：基于electron的信息管理工具
