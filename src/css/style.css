@@ -329,12 +329,15 @@
     height: 100px;
     /* background-color: rgba(19, 19, 19, 0.5); */
 }
-.textBox{
+
+.textBox {
     transition: all 500ms;
 }
-.textBox:hover{
-    transform: scale(1.03,1.03);
+
+.textBox:hover {
+    transform: scale(1.03, 1.03);
 }
+
 /* 文字提示小弹窗 */
 .pop {
     width: 160px;
@@ -363,6 +366,154 @@
     float: left;
 }
 
+/* 确认框 */
+.confirmForm {
+    height: 170px;
+    width: 320px;
+    /* background-color: #f3f3f3; */
+    border-radius: 10px;
+    position: fixed;
+    left: 30%;
+    top: 30%;
+    box-shadow: 0 2px 8px rgba(14, 21, 47, 0.7) !important;
+    display: none;
+    transition: all 500ms;
+}
+
+.confirmForm:hover {
+    transform: scale(1.1, 1.1);
+    transition: all 500ms;
+}
+
+.confirmTitleBox {
+    width: 100%;
+    height: 30px;
+    background-color: rgba(255, 255, 255, 0.1);
+    border-top-left-radius: 10px;
+    border-top-right-radius: 10px;
+    font-size: 15px;
+    text-align: center;
+    line-height: 30px;
+}
+
+.confirmContentBox {
+    width: 90%;
+    height: 80px;
+    font-size: 14px;
+    text-align: center;
+    line-height: 30px;
+    margin: 0px auto;
+    margin-top: 10px;
+}
+
+.confirmButtonBox {
+    width: 100%;
+    height: 40px;
+    font-size: 15px;
+    text-align: center;
+    line-height: 40px;
+    border-bottom-left-radius: 10px;
+    border-bottom-right-radius: 10px;
+}
+
+.confirmButton {
+    margin-right: 50px !important;
+    text-indent: -10px !important;
+}
+
+/* 删除项目图标 */
+.buttonCom {
+    width: 25%;
+    height: 25px;
+    background-color: rgba(255, 255, 255, 0.5);
+    float: right;
+    border-radius: 5px;
+    box-shadow: 0 2px 8px rgba(100, 100, 100, 0.7);
+    text-indent: 2px;
+    transition: all 500ms;
+    font-size: 13px;
+    line-height: 25px;
+    margin-right: 20px;
+}
+
+.buttonCom>img {
+    margin-left: 5px;
+    margin-top: 5px;
+    float: left;
+}
+
+#delData:hover {
+    cursor: pointer;
+}
+
+.buttonCom:hover {
+    transform: scale(1.1, 1.1);
+    transition: all 500ms;
+    cursor: pointer;
+}
+
+.delProjectBox {
+    user-select: none;
+    width: 15px;
+    height: 15px;
+    float: right;
+    margin-right: 5px;
+    margin-top: 5px;
+    transition: all 500ms;
+    border-radius: 7.5px;
+    display: none;
+}
+
+.delProjectBox:hover {
+    transform: scale(1.1, 1.1);
+    cursor: pointer;
+    transition: all 500ms;
+    background-color: rgba(255, 255, 255, 0.5);
+}
+
+.cardInfo:hover .delProjectBox {
+    display: block;
+    transition: all 500ms;
+}
+
+/* 排序号 */
+.projectSortBox {
+    width: 100%;
+    height: 30px;
+    position: fixed;
+    left: 2px;
+    bottom: 2px;
+    line-height: 30px;
+    text-indent: 5px;
+    font-weight: bolder;
+    font-size: 13px;
+    font-style: italic;
+    opacity: 0.8;
+
+}
+
+.projectSortBox>span {
+    background: linear-gradient(135deg, rgba(255,117,195,1),rgba(255,166,71,1),rgba(255,232,63,1),rgba(159,255,91,1),rgba(112,226,255,1),rgba(205,147,255,1));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+.projectSortInput {
+    width: 50%;
+    height: 80%;
+    background: transparent;
+    border: none;
+    font-size: 13px;
+    font-weight:700;
+    font-style: italic;
+    background: linear-gradient(135deg, rgba(255,117,195,1),rgba(255,166,71,1),rgba(255,232,63,1),rgba(159,255,91,1),rgba(112,226,255,1),rgba(205,147,255,1));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+.projectSortInput:focus {
+    outline: none;
+}
 
 
 
@@ -396,6 +547,7 @@ body {
     left: 55%;
     transform: translate(-50%, -50%);
     overflow: hidden;
+    transition: all 500;
 }
 
 .cover {
@@ -405,6 +557,7 @@ body {
     margin: 15px;
     /* cursor: pointer; */
     border-radius: 8px;
+    transition: all 500;
 }
 
 @media screen and (max-width: 700px) {
@@ -414,6 +567,7 @@ body {
         transform: translate(0%, 0%);
         top: 0;
         left: 0;
+        transition: all 500;
     }
 
     .cover {
@@ -421,6 +575,7 @@ body {
         height: 200px;
         width: 320px;
         margin: 15px auto;
+        transition: all 500;
     }
 }
 
@@ -428,11 +583,13 @@ body {
     border-radius: 8px;
     transform-style: preserve-3d;
     -webkit-tap-highlight-color: rgba(#000, 0);
+    transition: all 500;
 }
 
 .atvImg img {
     border-radius: 8px;
     box-shadow: 0 2px 8px rgba(14, 21, 47, 0.25);
+    transition: all 500;
 }
 
 .atvImg-container {
@@ -454,6 +611,7 @@ body {
     border-radius: 8px;
     overflow: hidden;
     transform-style: preserve-3d;
+    transition: all 500;
 }
 
 .atvImg-rendered-layer {

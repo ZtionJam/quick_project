@@ -22,6 +22,7 @@ var app = new Vue({
         },
         card: [],
         addFromData: {
+            id:'',
             title: '',
             sort: '',
             data: [
@@ -31,6 +32,11 @@ var app = new Vue({
                     sort: ''
                 }
             ]
+        },
+        confirmForm: {
+            title: 'Are you sure?',
+            content: '真的要删除 测试 这个卡片吗？删除后将无法恢复哦！',
+            index: 0
         }
 
     },
@@ -93,9 +99,45 @@ var app = new Vue({
         })
     },
     methods: {
-        //删除
-        delCard(item,index){
-            alert('开发中')
+        //确认删除
+        async confirmDel() {
+            var index = this.confirmForm.index;
+            var card = this.card[index];
+            if (!card) {
+                this.pop('数据未找到！！！')
+                return;
+            }
+            //删除卡片
+            var csql = `delete from card where id =${card.id}`;
+            var dsql = `delete from data where cardId=${card.id}`;
+            await dbEx.update(csql);
+            await dbEx.update(dsql);
+            this.card.splice(index, 1)
+            this.$nextTick(()=>{
+                this.putPicture();
+            })
+            this.closeDelForm()
+            this.pop('删除完成')
+        },
+        //关闭删除狂
+        closeDelForm() {
+            $('.shadowMock').fadeOut(400);
+            $('.confirmForm').fadeOut(300);
+        },
+        //显示删除框
+        delCard(item, index) {
+            //数据填充
+            this.confirmForm = {
+                title: 'Are you sure?',
+                content: `真的要删除 ${item.title} 这个卡片吗？删除后将无法恢复哦！`,
+                index: index
+            }
+
+            $('.shadowMock').fadeIn(400);
+            $('.confirmForm').fadeIn(300);
+            $('.confirmForm').css({
+                'background': getRandomCardColor('135deg', '0.95'),
+            });
         },
         //保存修改
         async saveUpdate() {
@@ -121,16 +163,16 @@ var app = new Vue({
             await dbEx.update(ddsql);
             //插入所有行
             this.addFromData.data.forEach(async data => {
-                var dataId=Date.now() + Math.ceil(Math.random() * 100);
+                var dataId = Date.now() + Math.ceil(Math.random() * 100);
                 var dsql = `INSERT INTO 
                 data ( "id", "cardId", "name", "value","type","sort" )
-                VALUES( '${dataId}', '${this.addFromData.id}', '${data.name}', '${data.value}','text','${data.sort||0}' );`;
-                data.id=dataId;
+                VALUES( '${dataId}', '${this.addFromData.id}', '${data.name}', '${data.value}','text','${data.sort || 0}' );`;
+                data.id = dataId;
                 console.log(dsql)
                 await dbEx.insert(dsql);
             });
-            var index=storage.getItem('updateIndex')||0;
-            this.card[index]=JSON.parse(JSON.stringify(this.addFromData))
+            var index = storage.getItem('updateIndex') || 0;
+            this.card[index] = JSON.parse(JSON.stringify(this.addFromData))
             this.$forceUpdate()
             this.$nextTick(() => {
                 this.putPicture();
@@ -139,7 +181,7 @@ var app = new Vue({
             this.closeAddForm();
         },
         //修改卡片信息
-        async editCard(card,inedx) {
+        async editCard(card, inedx) {
             storage.setItem("opt", 'update');
             storage.setItem("updateIndex", inedx);
             // console.log(card)
@@ -161,6 +203,7 @@ var app = new Vue({
             if (!this.addFormDataValid()) return;
             //保存卡片
             var cardId = Date.now();
+            this.addFromData.id=cardId;
             var csql = `INSERT INTO 
             card ( "id", "projectId", "title", "sort" )
             VALUES( '${cardId}', '${storage.getItem('projectId')}', '${this.addFromData.title}', '${this.addFromData.sort}' );`;

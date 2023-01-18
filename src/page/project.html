@@ -2,7 +2,7 @@
 <html>
 
 <head>
-  <title>项目</title>
+  <title>QuickProject</title>
   <script src="../js/color.js"></script>
   <script src="../js/vue.js"></script>
   <link rel="stylesheet" href="../css/style.css" />
@@ -51,7 +51,7 @@
           <div class="title">
             <input spellcheck="false" class="titleInput" type="text" v-model="item.title">
             <div v-on:click="delCard(item,index)" class="copyCard delIcon" title="删除卡片"></div>
-            <div v-on:click="editCard(item,index)" class="copyCard editIcon" title="编辑卡片"></div>
+            <div v-on:click="editCard(item,index)" class="copyCard editIcon" title="展开编辑"></div>
             <div v-on:click="copyCard(item)" class="copyCard" title="复制卡片信息"></div>
           </div>
           <!-- 记录项 -->
@@ -69,22 +69,22 @@
       </div>
       <div class="rightPanel">
         <div title="换套颜色" class="toolbar" v-on:click="changeCardColor">
-          <img class="toolbarIcon" src="../img/icon/刷新2.png" alt="">
+          <img draggable="false" class="toolbarIcon" src="../img/icon/刷新2.png" alt="">
         </div>
         <div title="添加卡片" class="toolbar" v-on:click="openAddForm">
-          <img class="toolbarIcon" src="../img/icon/新增.png" alt="">
+          <img draggable="false" class="toolbarIcon" src="../img/icon/新增.png" alt="">
         </div>
         <div title="全局编辑" class="toolbar">
-          <img class="toolbarIcon" src="../img/icon/编辑.png" alt="">
+          <img draggable="false" class="toolbarIcon" src="../img/icon/编辑.png" alt="">
         </div>
         <div title="打开项目文件夹" class="toolbar">
-          <img class="toolbarIcon" src="../img/icon/文件夹.png" alt="">
+          <img draggable="false" class="toolbarIcon" src="../img/icon/文件夹.png" alt="">
         </div>
         <div title="导出项目信息" class="toolbar">
-          <img class="toolbarIcon" src="../img/icon/导出.png" alt="">
+          <img draggable="false" class="toolbarIcon" src="../img/icon/导出.png" alt="">
         </div>
         <div title="帮助" class="toolbar">
-          <img class="toolbarIcon" src="../img/icon/帮助.png" alt="">
+          <img draggable="false" class="toolbarIcon" src="../img/icon/帮助.png" alt="">
         </div>
       </div>
     </div>
@@ -98,7 +98,7 @@
     <!-- 添加窗口 -->
     <div class="card addCardForm">
       <div class="addFormTitlebar" title="关闭窗口">
-        <div class="addFormTileText">添加卡片:</div>
+        <div class="addFormTileText">卡片信息:</div>
         <img v-on:click="closeAddForm" id="addFormCloseImg" src="../img/icon/关闭.png" alt="">
       </div>
       <div class="dataBox textBox addTitleDataBox">
@@ -133,9 +133,11 @@
               class="projectNameText valueInput addValueInput" type="text">
           </div>
           <div class="nameBox sortBox">
-            <input v-model="item.sort" placeholder="序号" spellcheck="false" class="dataName showInputBack sortInput" type="text">
+            <input v-model="item.sort" placeholder="序号" spellcheck="false" class="dataName showInputBack sortInput"
+              type="text">
           </div>
-          <img v-if="index>0" v-on:click="delLine(index)" :index="index" id="delData" title="删除本行" src="../img/icon/删除.png" alt="">
+          <img v-if="index>0" v-on:click="delLine(index)" :index="index" id="delData" title="删除本行"
+            src="../img/icon/删除.png" alt="">
         </div>
       </div>
       <!-- 按钮框 -->
@@ -143,9 +145,20 @@
         <div class="buttonCom addFormSavaBtnBox" v-on:click="savaAdd">
           <img src="../img/icon/保存.png" width="15px" alt="">保存
         </div>
-        <div class="buttonCom addFormAddLine"  v-on:click="addLine">
+        <div class="buttonCom addFormAddLine" v-on:click="addLine">
           <img src="../img/icon/添加.png" width="15px" alt="">再加一行
         </div>
+      </div>
+    </div>
+    <!-- 确认框 -->
+    <div class="confirmForm">
+      <div class="confirmTitleBox">{{confirmForm.title}}</div>
+      <div class="confirmContentBox">{{confirmForm.content}}</div>
+      <div class="confirmButtonBox">
+        <div v-on:click="confirmDel" class="buttonCom confirmButton"><img src="../img/icon/保存.png" width="15px"
+            alt="">确认</div>
+        <div v-on:click="closeDelForm" class="buttonCom confirmButton"><img src="../img/icon/叉.png" width="15px"
+            alt="">取消</div>
       </div>
     </div>
   </div>

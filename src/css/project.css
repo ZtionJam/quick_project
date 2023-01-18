@@ -376,34 +376,6 @@ body {
     margin-top: 5px;
 }
 
-.buttonCom {
-    width: 25%;
-    height: 25px;
-    background-color: rgba(255, 255, 255, 0.5);
-    float: right;
-    border-radius: 5px;
-    box-shadow: 0 2px 8px rgba(100, 100, 100, 0.7);
-    text-indent: 2px;
-    transition: all 500ms;
-    font-size: 13px;
-    line-height: 25px;
-    margin-right: 20px;
-}
-
-.buttonCom>img {
-    margin-left: 5px;
-    margin-top: 5px;
-    float: left;
-}
-#delData:hover {
-    cursor: pointer;
-}
-.buttonCom:hover {
-    transform: scale(1.1, 1.1);
-    transition: all 500ms;
-    cursor: pointer;
-}
-
 .addFormSavaBtnBox {
     width: 20%;
     float: right;
@@ -429,3 +401,7 @@ body {
     background: url('../img//icon/修改.png');
     background-size: cover;
 }
+/* 数据框禁止输入 */
+/* .projectCards input{
+    pointer-events: none;
+} */

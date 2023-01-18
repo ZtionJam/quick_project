@@ -32,16 +32,20 @@
       <div v-for="(project,index) in projects" class="cover atvImg">
         <div class="atvImg-layer" data-img="./img/visa-bg.jpg"></div>
         <div class="cardInfo">
+          <div title="删除卡片" class="delProjectBox" v-on:click="delProject(project,index)">
+            <img draggable="false" width="15px" v-on:click="" id="" src="./img/icon/关闭.png" alt="">
+          </div>
           <div class="projectLogo pLogo" :index="index" title="logo"
-            style="background: url('./img/头像.jpg');background-size: cover;"></div>
+            :style="{backgroundImage: 'url('+project.projectLogo+')',backgroundSize: 'cover'}"></div>
           <div class="projectName textBox" title="项目名字">
-            <input spellcheck="false" class="projectNameText projectInfoInput" type="text"
+            <input @blur="blurSave(project)" spellcheck="false" class="projectNameText projectInfoInput" type="text"
               v-model="project.projectName" />
           </div>
           <div class="projectTime textBox" title="项目开始时间">
-            <input spellcheck="false" class="projectNameText projectInfoInput" type="text"
+            <input @blur="blurSave(project)" spellcheck="false" class="projectNameText projectInfoInput" type="text"
               v-model="project.projectTime" />
           </div>
+          <div class="projectSortBox"><span>SORT: </span><input @blur="blurSave(project)" class="projectSortInput" type="text" v-model="project.sort"></div>
           <div class="next" v-on:click="openProject(project.id)" title="打开项目"></div>
         </div>
       </div>
@@ -77,6 +81,17 @@
     <div class="pop">
       <div class="popImg"><img width="30px" src="./img/icon/ok.png" alt=""></div>
       <div class="popText">已经复制到剪切板</div>
+    </div>
+    <!-- 确认框 -->
+    <div class="confirmForm">
+      <div class="confirmTitleBox">{{confirmForm.title}}</div>
+      <div class="confirmContentBox">{{confirmForm.content}}</div>
+      <div class="confirmButtonBox">
+        <div v-on:click="confirmDel" class="buttonCom confirmButton"><img src="./img/icon/保存.png" width="15px" alt="">确认
+        </div>
+        <div v-on:click="closeDelForm" class="buttonCom confirmButton"><img src="./img/icon/叉.png" width="15px"
+            alt="">取消</div>
+      </div>
     </div>
   </div>
   <script src="./js/dom.js"></script>

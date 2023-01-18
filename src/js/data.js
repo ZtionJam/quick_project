@@ -9,12 +9,18 @@ var app = new Vue({
     data: {
         title: '首页',
         addFrom: {
+            id: '',
             projectName: '',
             projectTime: '',
-            projectLogo: '',
+            projectLogo: './img/头像.jpg',
             sort: '',
         },
-        projects: []
+        projects: [],
+        confirmForm: {
+            title: 'Are you sure?',
+            content: '真的要删除 测试 这个卡片吗？删除后将无法恢复哦！',
+            index: 0
+        }
     },
     async created() {
         //加载数据
@@ -33,11 +39,70 @@ var app = new Vue({
                 this.atvImg();
             })
         })
+        this.projects.sort(function (a, b) {
+            return  parseInt(b.sort)-parseInt(a.sort)
+        })
     },
     async mounted() {
         this.atvImg();
     },
     methods: {
+        //输入框失去焦点
+        async blurSave(project) {
+            if (!project) {
+                this.pop('数据未找到！！！')
+                return;
+            }
+            var psql = `UPDATE "project" 
+                SET "projectName" = '${project.projectName}',
+                    "projectTime" = '${project.projectTime}',
+                    "projectLogo" = '${project.projectLogo}',
+                    "sort" = '${project.sort}' 
+                WHERE
+                    "id" = '${project.id}';`;
+            await dbEx.update(psql);
+            this.projects.sort(function (a, b) {
+                return  parseInt(b.sort)-parseInt(a.sort)
+            })
+            this.pop('修改保存成功')
+        },
+        //确认删除
+        async confirmDel() {
+            var index = this.confirmForm.index;
+            var project = this.projects[index]
+            if (!project) {
+                this.pop('数据未找到！！！')
+                return;
+            }
+            //删除项目
+            var psql = `delete from project where id =${project.id}`;
+            await dbEx.update(psql);
+            this.projects.splice(index, 1)
+            this.$nextTick(() => {
+                this.atvImg();
+            })
+            this.closeDelForm()
+            this.pop('删除完成')
+        },
+        //关闭删除狂
+        closeDelForm() {
+            $('.shadowMock').fadeOut(400);
+            $('.confirmForm').fadeOut(300);
+        },
+        delProject(project, index) {
+            //数据填充
+            this.confirmForm = {
+                title: 'Are you sure?',
+                content: `真的要删除 ${project.projectName} 这个卡片吗？删除后将无法恢复哦！`,
+                index: index
+            }
+
+            $('.shadowMock').fadeIn(400);
+            $('.confirmForm').fadeIn(300);
+            $('.confirmForm').css({
+                'background': getRandomCardColor('135deg', '0.95'),
+            });
+        },
         //数组排序
         sort(urlList) {
             for (var i = 0; i <= urlList.length - 2; i++) {
@@ -53,9 +118,11 @@ var app = new Vue({
         async addProject() {
             //参数校验
             if (!this.addFormDataValid()) return;
+            var projectId = Date.now();
+            this.addFrom.id = projectId;
             var sql = `INSERT INTO 
             project ( "id", "projectName", "projectTime", "projectLogo", "sort" )
-            VALUES( '${Date.now()}', '${this.addFrom.projectName}', '${this.addFrom.projectTime}', '${this.addFrom.projectLogo}', '${this.addFrom.sort}' );`;
+            VALUES( '${projectId}', '${this.addFrom.projectName}', '${this.addFrom.projectTime}', '${this.addFrom.projectLogo}', '${this.addFrom.sort}' );`;
             await dbEx.insert(sql);
             //新增默认放到第一个
             this.projects.unshift(this.addFrom);
@@ -69,7 +136,7 @@ var app = new Vue({
                         id: '',
                         projectName: '',
                         projectTime: '',
-                        projectLogo: '',
+                        projectLogo: './img/头像.jpg',
                         sort: '',
                     };
                     $("#addFormLogo").css({
@@ -260,7 +327,7 @@ var app = new Vue({
                 $(".pLogo").each((index, item) => {
                     var index = $(item).attr('index');
                     var logo = this.projects[index].projectLogo;
-                    if (logo != null&&logo.length>0) {
+                    if (logo != null && logo.length > 0) {
                         $(item).css({
                             background: 'url(' + logo + ')',
                             backgroundSize: 'cover'
