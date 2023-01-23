@@ -58,7 +58,7 @@ const createWindow = async () => {
         win.minimize()
     })
     // 打开项目
-    ipcMain.on('openProject', (e,args) => {
+    ipcMain.on('openProject', () => {
         win.loadFile('./src/page/project.html')
     })
     // 返回首页

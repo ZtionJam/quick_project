@@ -1,6 +1,5 @@
 
 const { ipcRenderer } = require('electron');
-const { port1, port2 } = new MessageChannel();
 var $ = require('jquery');
 const storage = require('electron-localstorage');
 const path = require('path')
@@ -42,6 +41,7 @@ var app = new Vue({
     },
     async created() {
         var id = storage.getItem('projectId');
+        console.log('项目id'+id)
         if (!id) {
             alert("参数不正确！！")
             this.backIndex()

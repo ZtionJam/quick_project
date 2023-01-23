@@ -193,7 +193,7 @@ var app = new Vue({
         //打开项目
         openProject(id) {
             storage.setItem("projectId", id);
-            ipcRenderer.send("openProject", id);
+            ipcRenderer.send("openProject", 'openProject');
         },
         //关闭窗口
         close(event) {
