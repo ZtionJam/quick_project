@@ -18,6 +18,8 @@
 
 # 技术
 
+[已完成功能_及使用方式](https://github.com/ZtionJam/quick_project/blob/master/help.md)
+
 使用基于NodeJS的Electron打包，Vue 2（script方式引入）+jQuery布局，Sqlite3做本地缓存，所有操作都有动画过渡，丝滑！
 
 # 功能
