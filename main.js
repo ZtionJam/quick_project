@@ -9,14 +9,14 @@ var logPath = runPath + "/log/run.log";
 
 //日志文件
 if (!fs.existsSync(runPath + "/log/run.log")) {
-    fs.mkdir(runPath + "/log/", (err) => { });
+    fs.mkdirSync(runPath + "/log/", (err) => { });
     fs.writeFileSync(runPath + "/log/run.log", "QuickPriject\n", (err) => {
     });
     log('创建日志文件');
 }
 //检查数据库文件
-if (!fs.existsSync(runPath + "/data/data")) {
-    fs.mkdir(runPath + "/data/", (err) => {
+if (!fs.existsSync(runPath + "/data/")) {
+    fs.mkdirSync(runPath + "/data/", (err) => {
         if (err) {
             log("创建数据库文件失败！！！", err.message)
         }

@@ -1,6 +1,6 @@
 const { ipcRenderer } = require('electron');
 const path = require('path')
-const { db, dbEx } = require(path.join(__dirname + "/sqlite/", 'sqlite'))
+const { db, dbEx, newData } = require(path.join(__dirname + "/sqlite/", 'sqlite'))
 const storage = require('electron-localstorage')
 
 var $ = require('jquery');
@@ -23,6 +23,13 @@ var app = new Vue({
         }
     },
     async created() {
+        //判断数据库是否是新建的,如果是新建的data文件，则执行建表sql
+        if (newData) {
+            await dbEx.initTable();
+            console.log('初始化建表完成')
+            await dbEx.insertDemo();
+            console.log('插入demo数据完成')
+        }
         //加载数据
         var sql = "select * from project order by sort desc";
         await dbEx.each(sql, (row) => {
@@ -40,7 +47,7 @@ var app = new Vue({
             })
         })
         this.projects.sort(function (a, b) {
-            return  parseInt(b.sort)-parseInt(a.sort)
+            return parseInt(b.sort) - parseInt(a.sort)
         })
     },
     async mounted() {
@@ -62,7 +69,7 @@ var app = new Vue({
                     "id" = '${project.id}';`;
             await dbEx.update(psql);
             this.projects.sort(function (a, b) {
-                return  parseInt(b.sort)-parseInt(a.sort)
+                return parseInt(b.sort) - parseInt(a.sort)
             })
             this.pop('修改保存成功')
         },
