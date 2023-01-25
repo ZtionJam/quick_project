@@ -56,7 +56,10 @@ var app = new Vue({
                 id: row.id,
                 projectName: row.projectName,
                 projectTime: row.projectTime,
-                projectLogo: row.projectLogo || '../img/头像.jpg'
+                projectLogo: row.projectLogo
+            }
+            if (projectData.projectLogo.indexOf('/img/') > 0) {
+                projectData.projectLogo = '../img/头像.jpg'
             }
             this.project = projectData;
             this.title = row.projectName
@@ -125,10 +128,16 @@ var app = new Vue({
                     return;
                 }
                 outputFile = `${path}/${this.project.projectName}.xlsx`;
-                var xlsxFile = process.cwd().toString() + "/data/example.xlsx";
-                var workbook = XLSX.readFile(xlsxFile);
+                //初始化表格
+                var ws = XLSX.utils.aoa_to_sheet([['A1']]);
+                var workbook = {
+                    SheetNames: ['sheet1'],
+                    Sheets: {
+                        'sheet1': ws
+                    }
+                };
                 var worksheet = workbook.Sheets[workbook.SheetNames[0]];
-                worksheet['!ref'] = `A1:AI${this.card.length * 5}`;
+                worksheet['!ref'] = `A1:AI${this.card.length * 10}`;
                 //设置列宽
                 worksheet['!cols'] = [{ wch: 23 }, { wch: 30 }];
                 //标题
@@ -148,9 +157,9 @@ var app = new Vue({
                 ]
                 worksheet['!merges'] = merge
                 //数据
-                worksheet['A3'] = { v: '名称' };
-                worksheet['B3'] = { v: '值' }
-                var row = 3;
+                // worksheet['A3'] = { v: '名称' };
+                // worksheet['B3'] = { v: '值' }
+                var row = 2;
                 this.card.forEach(card => {
                     row += 1;
                     worksheet['A' + row] = {
@@ -232,11 +241,11 @@ var app = new Vue({
                 "sort" = ${this.addFromData.sort} 
                 WHERE
                 "id" = '${this.addFromData.id}';`;
-            console.log(csql);
+            // console.log(csql);
             await dbEx.update(csql);
             //清除所有行
             var ddsql = `delete from data where cardId='${this.addFromData.id}'`;
-            console.log(ddsql)
+            // console.log(ddsql)
             await dbEx.update(ddsql);
             //插入所有行
             this.addFromData.data.forEach(async data => {
@@ -245,7 +254,7 @@ var app = new Vue({
                 data ( "id", "cardId", "name", "value","type","sort" )
                 VALUES( '${dataId}', '${this.addFromData.id}', '${data.name}', '${data.value}','text','${data.sort || 0}' );`;
                 data.id = dataId;
-                console.log(dsql)
+                // console.log(dsql)
                 await dbEx.insert(dsql);
             });
             var index = storage.getItem('updateIndex') || 0;
