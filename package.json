@@ -7,7 +7,9 @@
     "start": "electron-forge start",
     "package": "electron-forge package",
     "make": "electron-forge make",
-    "package-win": "electron-packager ./ QuickProject --overwrite --platform=win32 --out=app --prune=true --icon=./icon.ico"
+    "package-win": "electron-packager . QuickProject --overwrite --platform=win32 --out=out --prune=true --icon=./icon.ico",
+    "package-linux": "electron-packager . QuickProject --overwrite --platform=linux --arch=x64 --out=out",
+    "package-mac": "electron-packager . QuickProject --platform=darwin --arch=x64 --out=out --icon=./icon.ico"
   },
   "author": "ztion",
   "license": "ISC",
