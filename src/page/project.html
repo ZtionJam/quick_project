@@ -74,16 +74,16 @@
         <div title="添加卡片" class="toolbar" v-on:click="openAddForm">
           <img draggable="false" class="toolbarIcon" src="../img/icon/新增.png" alt="">
         </div>
-        <div title="全局编辑" class="toolbar">
+        <div title="全局编辑" class="toolbar" v-on:click="globalEdit">
           <img draggable="false" class="toolbarIcon" src="../img/icon/编辑.png" alt="">
         </div>
-        <div title="打开项目文件夹" class="toolbar">
+        <div title="打开项目文件夹" class="toolbar" v-on:click="openProjectDir">
           <img draggable="false" class="toolbarIcon" src="../img/icon/文件夹.png" alt="">
         </div>
-        <div title="导出项目信息" class="toolbar">
+        <div title="导出项目信息Excel" class="toolbar" v-on:click="exportExcel">
           <img draggable="false" class="toolbarIcon" src="../img/icon/导出.png" alt="">
         </div>
-        <div title="帮助" class="toolbar">
+        <div title="帮助" class="toolbar" v-on:click="openHelp">
           <img draggable="false" class="toolbarIcon" src="../img/icon/帮助.png" alt="">
         </div>
       </div>

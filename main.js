@@ -1,10 +1,12 @@
-const { Menu, app, BrowserWindow, ipcRenderer, ipcMain } = require('electron')
+const { dialog, Menu, app, BrowserWindow, ipcRenderer, ipcMain } = require('electron')
 // Menu.setApplicationMenu(null)
 require("@electron/remote/main").initialize();
 const path = require('path');
 const fs = require('fs')
+
 var runPath = process.cwd().toString();
 var logPath = runPath + "/log/run.log";
+
 //日志文件
 if (!fs.existsSync(runPath + "/log/run.log")) {
     fs.mkdir(runPath + "/log/", (err) => { });
@@ -14,9 +16,9 @@ if (!fs.existsSync(runPath + "/log/run.log")) {
 }
 //检查数据库文件
 if (!fs.existsSync(runPath + "/data/data")) {
-    fs.mkdir(runPath + "/data/", (err) => { 
-        if(err){
-            log("创建数据库文件失败！！！",err.message)
+    fs.mkdir(runPath + "/data/", (err) => {
+        if (err) {
+            log("创建数据库文件失败！！！", err.message)
         }
     });
     // fs.copyFileSync('./data/data', runPath + "/data/data"); 
@@ -65,6 +67,18 @@ const createWindow = async () => {
     ipcMain.on('backIndex', () => {
         win.loadFile('./src/index.html')
     })
+    //打开文件选择
+    ipcMain.on('open-openDirectory-dialog', function (event, p) {
+        var choose = dialog.showOpenDialogSync({
+            properties: [p],
+            title: '选择导出的Excel文件保存目录',
+            // defaultPath:''
+        })
+        if (choose) {
+            event.sender.send("chooseDir", choose[0])
+        }
+
+    });
 
 
     var path = app.getAppPath();

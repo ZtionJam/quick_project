@@ -4,6 +4,9 @@ var $ = require('jquery');
 const storage = require('electron-localstorage');
 const path = require('path')
 const { db, dbEx } = require(path.join(__dirname + "/../sqlite/", 'sqlite'));
+const XLSX = require("xlsx");
+const XLSX2 = require("xlsx-style");
+const fs = require('fs')
 
 var app = new Vue({
     el: '#box',
@@ -21,7 +24,7 @@ var app = new Vue({
         },
         card: [],
         addFromData: {
-            id:'',
+            id: '',
             title: '',
             sort: '',
             data: [
@@ -41,7 +44,7 @@ var app = new Vue({
     },
     async created() {
         var id = storage.getItem('projectId');
-        console.log('项目id'+id)
+        console.log('项目id' + id)
         if (!id) {
             alert("参数不正确！！")
             this.backIndex()
@@ -99,6 +102,80 @@ var app = new Vue({
         })
     },
     methods: {
+        //全局编辑
+        globalEdit() {
+            this.pop('全局编辑开发中！')
+        },
+        //打开项目文件夹
+        openProjectDir() {
+            this.pop('文件夹功能开发中！')
+        },
+        //打开帮助
+        openHelp() {
+            this.pop('帮助功能开发中！')
+        },
+        //导出为excel
+        exportExcel() {
+            var outputFile = process.cwd().toString() + "/data/output.xlsx"
+            //选择下载目录
+            ipcRenderer.send('open-openDirectory-dialog', 'openDirectory');
+            ipcRenderer.on('chooseDir', (e, path) => {
+                if (!fs.existsSync(path)) {
+                    this.pop('所选文件夹不存在!')
+                    return;
+                }
+                outputFile = `${path}/${this.project.projectName}.xlsx`;
+                var xlsxFile = process.cwd().toString() + "/data/example.xlsx";
+                var workbook = XLSX.readFile(xlsxFile);
+                var worksheet = workbook.Sheets[workbook.SheetNames[0]];
+                worksheet['!ref'] = `A1:AI${this.card.length * 5}`;
+                //设置列宽
+                worksheet['!cols'] = [{ wch: 23 }, { wch: 30 }];
+                //标题
+                worksheet['A1'] = {
+                    v: this.project.projectName,
+                    s: {
+                        alignment: {
+                            vertical: 'center',
+                            horizontal: 'center'
+                        }
+                    }
+                }
+
+                //合并标题框
+                var merge = [
+                    { s: { r: 0, c: 0 }, e: { r: 1, c: 1 } }
+                ]
+                worksheet['!merges'] = merge
+                //数据
+                worksheet['A3'] = { v: '名称' };
+                worksheet['B3'] = { v: '值' }
+                var row = 3;
+                this.card.forEach(card => {
+                    row += 1;
+                    worksheet['A' + row] = {
+                        v: card.title,
+                        s: {
+                            fill: { patternType: 'solid', fgColor: { rgb: '92D050' } }
+                        }
+                    }
+                    worksheet['B' + row] = {
+                        v: '',
+                        s: {
+                            fill: { patternType: 'solid', fgColor: { rgb: '92D050' } }
+                        }
+                    }
+                    card.data.forEach(data => {
+                        row += 1;
+                        worksheet['A' + row] = { v: data.name }
+                        worksheet['B' + row] = { v: data.value }
+                    })
+                    row += 1;
+                })
+                XLSX2.writeFile(workbook, outputFile);
+                this.pop('导出成功')
+            })
+        },
         //确认删除
         async confirmDel() {
             var index = this.confirmForm.index;
@@ -113,7 +190,7 @@ var app = new Vue({
             await dbEx.update(csql);
             await dbEx.update(dsql);
             this.card.splice(index, 1)
-            this.$nextTick(()=>{
+            this.$nextTick(() => {
                 this.putPicture();
             })
             this.closeDelForm()
@@ -203,7 +280,7 @@ var app = new Vue({
             if (!this.addFormDataValid()) return;
             //保存卡片
             var cardId = Date.now();
-            this.addFromData.id=cardId;
+            this.addFromData.id = cardId;
             var csql = `INSERT INTO 
             card ( "id", "projectId", "title", "sort" )
             VALUES( '${cardId}', '${storage.getItem('projectId')}', '${this.addFromData.title}', '${this.addFromData.sort}' );`;
