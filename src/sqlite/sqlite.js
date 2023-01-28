@@ -20,6 +20,24 @@ if (fs.existsSync(dbPath)) {
   newData = true;
 }
 
+const storage = {
+  //读
+  getItem: async (key) => {
+    var sql = `SELECT * FROM "config" WHERE key ='${key}'`;
+    var value = '';
+    await dbEx.each(sql, (row) => {
+      value = row.value
+    })
+    return value;
+  },
+  //存
+  setItem: async (key, value) => {
+    var sql = `UPDATE "config" SET "value" = '${value}' WHERE "key" = '${key}';`;
+    await dbEx.update(sql)
+
+  }
+}
+
 const dbEx = {
   //sql查询
   quryBysql: (sql) => {
@@ -111,6 +129,10 @@ const dbEx = {
         db.run(insertCardSql, (err) => { });
         db.run(insertData1Sql, (err) => { });
         db.run(insertData2Sql, (err) => { });
+
+        db.run(insertConfig1sql, (err) => { });
+        db.run(insertConfig2sql, (err) => { });
+        db.run(insertConfig3sql, (err) => { });
         resolve(true)
       })
     })
@@ -120,6 +142,9 @@ var insertProjectSql = `INSERT INTO "main"."project" ("id", "projectName", "proj
 var insertCardSql = `INSERT INTO "main"."card" ("id", "projectId", "title", "sort") VALUES ('1674650648679', '1674650586736', '示例数据', 1);`
 var insertData1Sql = `INSERT INTO "main"."data" ("id", "cardId", "name", "value", "type", "sort") VALUES ('1674650648781', '1674650648679', '名称', '值', 'text', 2);`
 var insertData2Sql = `INSERT INTO "main"."data" ("id", "cardId", "name", "value", "type", "sort") VALUES ('1674650648758', '1674650648679', '名称', '值', 'text', 1);`
+var insertConfig1sql=`INSERT INTO "config" ('key', "value") VALUES ('updateIndex', '1');`; 
+var insertConfig2sql=`INSERT INTO "config" ("key", "value") VALUES ('projectId', '1');`; 
+var insertConfig3sql=`INSERT INTO "config" ("key", "value") VALUES ('opt', 'add');`; 
 
 var projectTable = `CREATE TABLE "project" (
   "id" text NOT NULL,
@@ -150,4 +175,4 @@ var configTable = `CREATE TABLE "config" (
   "value" TEXT
 );`;
 
-module.exports = { db, dbEx, newData };
+module.exports = { db, dbEx, newData,storage };

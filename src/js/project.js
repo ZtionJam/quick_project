@@ -1,9 +1,9 @@
 
 const { ipcRenderer } = require('electron');
 var $ = require('jquery');
-const storage = require('electron-localstorage');
+// const storage = require('electron-localstorage');
 const path = require('path')
-const { db, dbEx } = require(path.join(__dirname + "/../sqlite/", 'sqlite'));
+const { db, dbEx, storage } = require(path.join(__dirname + "/../sqlite/", 'sqlite'));
 const XLSX = require("xlsx");
 const XLSX2 = require("xlsx-style");
 const fs = require('fs')
@@ -43,7 +43,7 @@ var app = new Vue({
 
     },
     async created() {
-        var id = storage.getItem('projectId');
+        var id = await storage.getItem('projectId');
         console.log('项目id' + id)
         if (!id) {
             alert("参数不正确！！")
@@ -236,7 +236,7 @@ var app = new Vue({
             }
             //先保存卡片信息
             var csql = `UPDATE "card" 
-                SET "projectId" = '${storage.getItem('projectId')}',
+                SET "projectId" = '${this.project.id}',
                 "title" = '${this.addFromData.title}',
                 "sort" = ${this.addFromData.sort} 
                 WHERE
@@ -257,7 +257,7 @@ var app = new Vue({
                 // console.log(dsql)
                 await dbEx.insert(dsql);
             });
-            var index = storage.getItem('updateIndex') || 0;
+            var index = await storage.getItem('updateIndex') || 0;
             this.card[index] = JSON.parse(JSON.stringify(this.addFromData))
             this.$forceUpdate()
             this.$nextTick(() => {
@@ -281,7 +281,7 @@ var app = new Vue({
         },
         //保存添加窗口
         async savaAdd() {
-            if ('update' == storage.getItem("opt")) {
+            if ('update' == await storage.getItem("opt")) {
                 this.saveUpdate()
                 return;
             }
@@ -292,7 +292,7 @@ var app = new Vue({
             this.addFromData.id = cardId;
             var csql = `INSERT INTO 
             card ( "id", "projectId", "title", "sort" )
-            VALUES( '${cardId}', '${storage.getItem('projectId')}', '${this.addFromData.title}', '${this.addFromData.sort}' );`;
+            VALUES( '${cardId}', '${this.project.id}', '${this.addFromData.title}', '${this.addFromData.sort}' );`;
             console.log(csql)
             await dbEx.insert(csql);
             this.addFromData.data.forEach(async data => {
