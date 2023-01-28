@@ -45,7 +45,8 @@
             <input @blur="blurSave(project)" spellcheck="false" class="projectNameText projectInfoInput" type="text"
               v-model="project.projectTime" />
           </div>
-          <div class="projectSortBox"><span>SORT: </span><input @blur="blurSave(project)" class="projectSortInput" type="text" v-model="project.sort"></div>
+          <div class="projectSortBox"><span>SORT: </span><input @blur="blurSave(project)" class="projectSortInput"
+              type="text" v-model="project.sort"></div>
           <div class="next" v-on:click="openProject(project.id)" title="打开项目"></div>
         </div>
       </div>
@@ -82,15 +83,24 @@
       <div class="popImg"><img width="30px" src="./img/icon/ok.png" alt=""></div>
       <div class="popText">已经复制到剪切板</div>
     </div>
+    <!-- 更新进度条 -->
+    <div class="updateBar">
+      <div>下载更新中</div>
+      <div>
+        <div id="baring">1</div>
+      </div>
+      <div>{{updateData.nowMB}}mb/{{updateData.sizeMB}}mb</div>
+    </div>
     <!-- 确认框 -->
     <div class="confirmForm">
       <div class="confirmTitleBox">{{confirmForm.title}}</div>
       <div class="confirmContentBox">{{confirmForm.content}}</div>
       <div class="confirmButtonBox">
-        <div v-on:click="confirmDel" class="buttonCom confirmButton"><img src="./img/icon/保存.png" width="15px" alt="">确认
+        <div v-on:click="confirmDel" class="buttonCom confirmButton"><img src="./img/icon/保存.png" width="15px" alt="">
+          {{confirmForm.yesText}}
         </div>
         <div v-on:click="closeDelForm" class="buttonCom confirmButton"><img src="./img/icon/叉.png" width="15px"
-            alt="">取消</div>
+            alt="">{{confirmForm.noText}}</div>
       </div>
     </div>
   </div>

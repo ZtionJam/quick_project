@@ -515,6 +515,46 @@
     outline: none;
 }
 
+.updateBar{
+    position: fixed;
+    bottom: 2%;
+    left: 33%;
+    width: 300px;
+    height: 15px;
+    background: linear-gradient(135deg, rgba(112, 225, 245, 0.5), rgba(255, 209, 148, 0.5));
+    overflow: hidden;
+    border-radius: 5px;
+    display: none;
+    
+}
+.updateBar >div{
+    float: left;
+    font-size: 10px;
+    border-radius: 5px;
+    line-height: 15px;
+}
+.updateBar >div:nth-child(3){
+    float: right;
+    margin-right: 5px;
+}
+.updateBar >div:nth-child(1){
+    margin-left: 5px;
+}
+.updateBar >div:nth-child(2){
+    background: linear-gradient(135deg, rgba(240, 152, 25, 0.5), rgba(237, 222, 93, 0.5));
+    margin-top: 5px;
+    width: 50%;
+    height: 8px;
+    margin-left: 5px;
+}
+.updateBar >div:nth-child(2) >div{
+    background: linear-gradient(135deg, rgba(26, 42, 108, 0.5), rgba(178, 31, 31, 0.5), rgba(253, 187, 45, 0.5));
+    height: 8px;
+    width: 1%;
+    font-size: 0px;
+    border-radius: 5px;
+}
+
 
 
 

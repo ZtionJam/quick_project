@@ -39,7 +39,14 @@ var app = new Vue({
             title: 'Are you sure?',
             content: '真的要删除 测试 这个卡片吗？删除后将无法恢复哦！',
             index: 0
-        }
+        },
+        updateData: {
+            size: 0,
+            uri: '',
+            sizeMB: '',
+            nowMB: ''
+        },
+        updateInterval: 0
 
     },
     async created() {
@@ -103,8 +110,46 @@ var app = new Vue({
                 'transition': 'all 500ms'
             });
         })
+        //检查是否有正在下载的更新
+        this.findUpload();
     },
     methods: {
+        //调起进度条
+        openBar() {
+            $('.updateBar').css({
+                // 'background': getRandomCardColor('135deg', '0.9'),
+                'transition': 'all 500ms',
+                'display': 'block'
+            });
+            $('.updateBar').animate({ bottom: '5%', opacity: '1' });
+
+            this.updateInterval = setInterval(async () => {
+                this.updateData.sizeMB = (await storage.getItem('downSize') / 1024 / 1024).toFixed(2)
+                this.updateData.nowMB = (await storage.getItem('downNow') / 1024 / 1024).toFixed(2)
+                $('#baring').css('width', (this.updateData.nowMB / this.updateData.sizeMB).toFixed(2) * 100 + '%')
+
+            }, 1000)
+        },
+        //检查是否有正在下载的进程
+        async findUpload() {
+            var once = await storage.getItem('downNow');
+            if (once > 0) {
+                setTimeout(async () => {
+                    var tow = await storage.getItem('downNow');
+                    if (once != tow) {
+                        this.openBar()
+                    } else {
+                        setTimeout(async () => {
+                            var three = await storage.getItem('downNow');
+                            if (once != three) {
+                                this.openBar()
+                            }
+                        }, 3000)
+                    }
+                }, 1000)
+            }
+
+        },
         //全局编辑
         globalEdit() {
             this.pop('全局编辑开发中！')

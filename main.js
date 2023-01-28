@@ -3,6 +3,11 @@ const { dialog, Menu, app, BrowserWindow, ipcRenderer, ipcMain } = require('elec
 require("@electron/remote/main").initialize();
 const path = require('path');
 const fs = require('fs')
+const ChildProccess = require('child_process');
+const https = require('https');
+var request = require('request');
+const { storage } = require(path.join(__dirname + "/src/sqlite/", 'sqlite'))
+
 
 var runPath = process.cwd().toString();
 var logPath = runPath + "/log/run.log";
@@ -25,8 +30,6 @@ if (!fs.existsSync(runPath + "/data/")) {
     log('创建数据文件');
 }
 
-
-
 const createWindow = async () => {
     const win = new BrowserWindow({
         width: 800,
@@ -41,7 +44,19 @@ const createWindow = async () => {
             enableRemoteModule: true
         }
     })
-
+    const gotTheLock = app.requestSingleInstanceLock()
+    if (!gotTheLock) {
+        app.quit()
+    } else {
+        app.on('second-instance', (event, commandLine, workingDirectory) => {
+            // 当运行第二个实例时,将会聚焦到mainWindow这个窗口
+            if (win) {
+                if (win.isMinimized()) win.restore()
+                win.focus()
+                win.show()
+            }
+        })
+    }
     // require("@electron/remote/main").enable(win.webContents);
 
     win.loadFile('./src/index.html')
@@ -49,6 +64,8 @@ const createWindow = async () => {
     win.once('ready-to-show', () => {
         // 初始化后再显示
         win.show()
+        //打开开发工具
+        win.webContents.openDevTools();
     })
     // 推出
     ipcMain.on('closeApp', () => {
@@ -79,15 +96,26 @@ const createWindow = async () => {
         }
 
     });
+    // 更新Asar
+    ipcMain.on('updateAsar', () => {
+        var child = ChildProccess.spawn(`"${runPath + '/update.exe'}"`, [`"${runPath + '/res'}"`, `"${runPath + '/QuickProject.exe'}"`], {
+            detached: true,
+            shell: true,
+            stdio: 'ignore'
+        })
+        child.unref()
+    });
+    // 下载Asar
+    ipcMain.on('downAsar', (event, data) => {
+        download(data.uri, data.filename);
+    });
 
 
     var path = app.getAppPath();
     console.log("启动目录：" + path)
 
-
-    //打开开发工具
-    // win.webContents.openDevTools();
     log("启动完成")
+
 }
 
 app.whenReady().then(() => {
@@ -112,4 +140,34 @@ function getCurrentTime() {
     var curTime = year + "-" + month + "-" + day
         + " " + hour + ":" + minute + ":" + second;
     return curTime;
+}
+function download(uri, filename, action) {
+    var onError = (e) => {
+        console.log(e)
+        console.log('err')
+        // log('更新失败啦！')
+        // fs.unlink(filename);
+    }
+    https.get(uri, (response) => {
+        // console.log(response)
+        if (response.statusCode >= 200 && response.statusCode < 300) {
+            var fileStream = fs.createWriteStream(filename);
+            fileStream.on('error', onError);
+            response.pipe(fileStream); 
+            var len = 0;
+            response.on('data', function (chunk) {
+                // fileStream.write(chunk);
+                len += chunk.length;
+                storage.setItem('downNow', len);
+            });
+            response.on('finish', function (data) {
+                console.log('下载完成！')
+                storage.setItem('downNow', 0);
+            });
+        } else if (response.headers.location) {
+            download(response.headers.location, filename);
+        } else {
+            new Error(response.statusCode + ' ' + response.statusMessage);
+        }
+    }).on('error', onError);
 }

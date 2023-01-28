@@ -1,7 +1,13 @@
 const { ipcRenderer } = require('electron');
 const path = require('path')
-const { db, dbEx, newData,storage } = require(path.join(__dirname + "/sqlite/", 'sqlite'))
-// const storage = require('electron-localstorage')
+const { db, dbEx, newData, storage } = require(path.join(__dirname + "/sqlite/", 'sqlite'))
+const https = require('https');
+var request = require('request');
+const download = require('download');
+const fs = require('fs')
+
+
+var runPath = process.cwd().toString();
 
 var $ = require('jquery');
 var app = new Vue({
@@ -16,11 +22,21 @@ var app = new Vue({
             sort: '',
         },
         projects: [],
+        confirmUse: 'del',
         confirmForm: {
             title: 'Are you sure?',
             content: '真的要删除 测试 这个卡片吗？删除后将无法恢复哦！',
-            index: 0
-        }
+            index: 0,
+            noText: '取消',
+            yesText: '确定'
+        },
+        updateData: {
+            size: 0,
+            uri: '',
+            sizeMB: '',
+            nowMB: ''
+        },
+        updateInterval: 0
     },
     async created() {
         //判断数据库是否是新建的,如果是新建的data文件，则执行建表sql
@@ -52,8 +68,112 @@ var app = new Vue({
     },
     async mounted() {
         this.atvImg();
+        //检查更新信息
+        this.findUpload()
     },
     methods: {
+        //调起进度条
+        openBar() {
+            $('.updateBar').css({
+                // 'background': getRandomCardColor('135deg', '0.9'),
+                'transition': 'all 500ms',
+                'display': 'block'
+            });
+            $('.updateBar').animate({ bottom: '5%', opacity: '1' });
+
+            this.updateInterval = setInterval(async () => {
+                this.updateData.sizeMB = (await storage.getItem('downSize') / 1024 / 1024).toFixed(2)
+                this.updateData.nowMB = (await storage.getItem('downNow') / 1024 / 1024).toFixed(2)
+                $('#baring').css('width', (this.updateData.nowMB / this.updateData.sizeMB).toFixed(2) * 100 + '%')
+
+            }, 1000)
+        },
+        //检查是否有正在下载的进程
+        async findUpload() {
+            var once = await storage.getItem('downNow');
+            if (once > 0) {
+                setTimeout(async () => {
+                    var tow = await storage.getItem('downNow');
+                    if (once != tow) {
+                        this.openBar()
+                    } else {
+                        setTimeout(async () => {
+                            var three = await storage.getItem('downNow');
+                            if (once != three) {
+                                this.openBar()
+                            } else {
+                                this.checkUpdate()
+                            }
+                        }, 3000)
+                    }
+                }, 1000)
+            } else {
+                this.checkUpdate()
+            }
+
+        },
+        //取消更新
+        cancelUpdate() {
+            $('.shadowMock').fadeOut(400);
+            $('.confirmForm').fadeOut(300);
+        },
+        //立即更新
+        updateNow() {
+            $('.updateBar').css({
+                // 'background': getRandomCardColor('135deg', '0.9'),
+                'transition': 'all 500ms',
+                'display': 'block'
+            });
+            $('.updateBar').animate({ bottom: '5%', opacity: '1' });
+            $('.shadowMock').fadeOut(400);
+            $('.confirmForm').fadeOut(300);
+            var filename = runPath + '/resources/update.as';
+            ipcRenderer.send('downAsar', { uri: this.updateData.uri, filename: filename });
+            this.openBar();
+            this.pop('请保持软件开启，正常使用!',230,4000)
+        },
+        //检查更新
+        async checkUpdate() {
+            //检查asar更新
+            try {
+                if (await storage.getItem('autoUpdateAsar') == 'true') {
+                    var url = await storage.getItem('asarReleasesUrl');
+                    var nowVersion = await storage.getItem('versionNum');
+                    request(url, { headers: { 'User-Agent': 'request' } }, (error, response, body) => {
+                        var data = JSON.parse(body)
+                        var lastVersion = JSON.parse(data[0].body).versionNum
+                        if (lastVersion > nowVersion) {
+                            // this.pop('Github上发布了新版本哦！', 230, 2000)
+                            //删除一次，防止上次的下载中断文件
+                            var fileUrl = data[0].assets[0].browser_download_url;
+                            var fileSize = data[0].assets[0].size;
+                            var len = 0;
+                            this.updateData.size = fileSize;
+                            this.updateData.uri = fileUrl;
+                            storage.setItem('downSize', fileSize);
+                            //弹出更新提示框
+                            this.confirmUse = 'update';
+                            this.confirmForm = {
+                                title: '有更新哦',
+                                content: `检测到有新的版本更新，是否立即更新？(取消更新后今天不再弹窗提示)`,
+                                index: 99999,
+                                noText: '暂不更新',
+                                yesText: '立即更新'
+                            }
+
+                            $('.shadowMock').fadeIn(400);
+                            $('.confirmForm').fadeIn(300);
+                            $('.confirmForm').css({
+                                'background': getRandomCardColor('135deg', '0.95'),
+                            });
+                        }
+
+                    })
+                }
+            } catch (error) {
+                console.log('检查更新失败', error)
+            }
+        },
         //输入框失去焦点
         async blurSave(project) {
             if (!project) {
@@ -75,6 +195,10 @@ var app = new Vue({
         },
         //确认删除
         async confirmDel() {
+            if (this.confirmUse == 'update') {
+                this.updateNow()
+                return;
+            }
             var index = this.confirmForm.index;
             var project = this.projects[index]
             if (!project) {
@@ -93,15 +217,23 @@ var app = new Vue({
         },
         //关闭删除狂
         closeDelForm() {
+            if (this.confirmUse == 'update') {
+                this.cancelUpdate()
+                return;
+            }
             $('.shadowMock').fadeOut(400);
             $('.confirmForm').fadeOut(300);
         },
+        //打开删除框
         delProject(project, index) {
+            this.confirmUse = 'update';
             //数据填充
             this.confirmForm = {
                 title: 'Are you sure?',
                 content: `真的要删除 ${project.projectName} 这个卡片吗？删除后将无法恢复哦！`,
-                index: index
+                index: index,
+                noText: '取消',
+                yesText: '确定'
             }
 
             $('.shadowMock').fadeIn(400);
@@ -257,20 +389,32 @@ var app = new Vue({
                 }
             });
         },
-        pop(text) {
+        // pop(text) { this.pop(text, 160, 2000) },
+        // pop(text, width) { this.pop(text, width, 2000) },
+        pop(text, width, time) {
+            if(!width){
+                width=160;
+            }
+            if(!time){
+                time=2000
+            }
             //提示弹窗
             $('.popText').text(text);
             if ($('.pop').css('bottom') == '2%' || $('.pop').css('bottom') == '12px') {
                 $('.pop').css({
                     'background': getRandomCardColor('135deg', '0.9'),
                     'transition': 'all 500ms',
-                    'display': 'block'
+                    'display': 'block',
+                    'width': width + 'px'
                 });
                 //1s后自动回去
                 $('.pop').animate({ bottom: '8%', opacity: '1' });
                 setTimeout(function () {
                     $('.pop').animate({ bottom: '2%', opacity: '0' });
-                }, 1500)
+                }, time)
+                setTimeout(function () {
+                    $('.pop').css('width', '160px')
+                }, time + 1000)
             }
         },
         //渲染卡片
