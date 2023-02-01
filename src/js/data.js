@@ -70,12 +70,30 @@ var app = new Vue({
         this.atvImg();
         //检查更新信息
         this.findUpload()
+        //监听下载信息
+        ipcRenderer.on("downOver",()=>{
+            $('.updateBar').css({
+                'transition': 'all 500ms',
+                'display': 'none'
+            });
+            $('.updateBar').animate({ bottom: '5%', opacity: '1' });
+            clearInterval(this.updateInterval)
+            this.pop("下载完成")
+        })
+        ipcRenderer.on("downErr",(e,err)=>{
+            $('.updateBar').css({
+                'transition': 'all 500ms',
+                'display': 'none'
+            });
+            console.log(err)
+            clearInterval(this.updateInterval)
+            this.pop("下载出错了,请稍后重试",250,5000)
+        })
     },
     methods: {
         //调起进度条
         openBar() {
             $('.updateBar').css({
-                // 'background': getRandomCardColor('135deg', '0.9'),
                 'transition': 'all 500ms',
                 'display': 'block'
             });

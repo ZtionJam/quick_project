@@ -107,7 +107,7 @@ const createWindow = async () => {
     });
     // 下载Asar
     ipcMain.on('downAsar', (event, data) => {
-        download(data.uri, data.filename);
+        download(data.uri, data.filename,win);
     });
 
 
@@ -115,6 +115,7 @@ const createWindow = async () => {
     console.log("启动目录：" + path)
 
     log("启动完成")
+    
 
 }
 
@@ -141,31 +142,32 @@ function getCurrentTime() {
         + " " + hour + ":" + minute + ":" + second;
     return curTime;
 }
-function download(uri, filename, action) {
+function download(uri, filename, win) {
     var onError = (e) => {
         console.log(e)
         console.log('err')
-        // log('更新失败啦！')
-        // fs.unlink(filename);
+        win.webContents.send("downErr",e)
+        // storage.setItem('downNow', 0);
     }
     https.get(uri, (response) => {
         // console.log(response)
         if (response.statusCode >= 200 && response.statusCode < 300) {
             var fileStream = fs.createWriteStream(filename);
             fileStream.on('error', onError);
-            response.pipe(fileStream); 
+            response.pipe(fileStream);
             var len = 0;
             response.on('data', function (chunk) {
                 // fileStream.write(chunk);
                 len += chunk.length;
                 storage.setItem('downNow', len);
             });
-            response.on('finish', function (data) {
+            fileStream.on('finish', function (data) {
                 console.log('下载完成！')
+                win.webContents.send("downOver","downOver")
                 storage.setItem('downNow', 0);
             });
         } else if (response.headers.location) {
-            download(response.headers.location, filename);
+            download(response.headers.location, filename,win);
         } else {
             new Error(response.statusCode + ' ' + response.statusMessage);
         }

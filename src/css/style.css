@@ -550,7 +550,7 @@
 .updateBar >div:nth-child(2) >div{
     background: linear-gradient(135deg, rgba(26, 42, 108, 0.5), rgba(178, 31, 31, 0.5), rgba(253, 187, 45, 0.5));
     height: 8px;
-    width: 1%;
+    width: 0%;
     font-size: 0px;
     border-radius: 5px;
 }
