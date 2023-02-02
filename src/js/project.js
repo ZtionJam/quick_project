@@ -43,10 +43,10 @@ var app = new Vue({
         updateData: {
             size: 0,
             uri: '',
-            sizeMB: '',
-            nowMB: ''
+            sizeMB: '0',
+            nowMB: '0'
         },
-        updateInterval: 0
+        updateBar: false
 
     },
     async created() {
@@ -110,8 +110,36 @@ var app = new Vue({
                 'transition': 'all 500ms'
             });
         })
-        //检查是否有正在下载的更新
-        this.findUpload();
+        //监听下载信息
+        ipcRenderer.on("downOver", () => {
+            $('.updateBar').css({
+                'transition': 'all 500ms',
+                'display': 'none'
+            });
+            $('.updateBar').animate({ bottom: '5%', opacity: '1' });
+            this.pop("下载完成")
+        });
+        ipcRenderer.on("downErr", (e, err) => {
+            $('.updateBar').css({
+                'transition': 'all 500ms',
+                'display': 'none'
+            });
+            console.log(err)
+            this.pop("下载出错了,请稍后重试", 250, 5000)
+        });
+        ipcRenderer.on("chunk", async (e, chunk) => {
+            if (!this.updateBar) {
+                $('.updateBar').css({
+                    'transition': 'all 500ms',
+                    'display': 'block'
+                });
+                $('.updateBar').animate({ bottom: '5%', opacity: '1' });
+                this.updateBar = true;
+            }
+            this.updateData.sizeMB = (chunk.size / 1024 / 1024).toFixed(2)
+            this.updateData.nowMB = (chunk.len / 1024 / 1024).toFixed(2)
+            $('#baring').css('width', (this.updateData.nowMB / this.updateData.sizeMB).toFixed(2) * 100 + '%')
+        });
     },
     methods: {
         //调起进度条
@@ -129,26 +157,6 @@ var app = new Vue({
                 $('#baring').css('width', (this.updateData.nowMB / this.updateData.sizeMB).toFixed(2) * 100 + '%')
 
             }, 1000)
-        },
-        //检查是否有正在下载的进程
-        async findUpload() {
-            var once = await storage.getItem('downNow');
-            if (once > 0) {
-                setTimeout(async () => {
-                    var tow = await storage.getItem('downNow');
-                    if (once != tow) {
-                        this.openBar()
-                    } else {
-                        setTimeout(async () => {
-                            var three = await storage.getItem('downNow');
-                            if (once != three) {
-                                this.openBar()
-                            }
-                        }, 3000)
-                    }
-                }, 1000)
-            }
-
         },
         //全局编辑
         globalEdit() {
@@ -516,20 +524,30 @@ var app = new Vue({
             //提示弹窗
             this.pop('已经复制到剪切板')
         },
-        pop(text) {
+        pop(text, width, time) {
+            if (!width) {
+                width = 160;
+            }
+            if (!time) {
+                time = 2000
+            }
             //提示弹窗
             $('.popText').text(text);
             if ($('.pop').css('bottom') == '2%' || $('.pop').css('bottom') == '12px') {
                 $('.pop').css({
                     'background': getRandomCardColor('135deg', '0.9'),
                     'transition': 'all 500ms',
-                    'display': 'block'
+                    'display': 'block',
+                    'width': width + 'px'
                 });
                 //1s后自动回去
                 $('.pop').animate({ bottom: '8%', opacity: '1' });
                 setTimeout(function () {
                     $('.pop').animate({ bottom: '2%', opacity: '0' });
-                }, 1500)
+                }, time)
+                setTimeout(function () {
+                    $('.pop').css('width', '160px')
+                }, time + 1000)
             }
         }
     }

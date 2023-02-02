@@ -33,10 +33,10 @@ var app = new Vue({
         updateData: {
             size: 0,
             uri: '',
-            sizeMB: '',
-            nowMB: ''
+            sizeMB: '0',
+            nowMB: '0'
         },
-        updateInterval: 0
+        updateBar: false
     },
     async created() {
         //判断数据库是否是新建的,如果是新建的data文件，则执行建表sql
@@ -69,28 +69,57 @@ var app = new Vue({
     async mounted() {
         this.atvImg();
         //检查更新信息
-        this.findUpload()
+        this.checkUpdate()
         //监听下载信息
-        ipcRenderer.on("downOver",()=>{
+        ipcRenderer.on("downOver", () => {
             $('.updateBar').css({
                 'transition': 'all 500ms',
                 'display': 'none'
             });
             $('.updateBar').animate({ bottom: '5%', opacity: '1' });
-            clearInterval(this.updateInterval)
+            //更新
             this.pop("下载完成")
-        })
-        ipcRenderer.on("downErr",(e,err)=>{
+            this.confirmUse = 'installUpdate';
+            this.confirmForm = {
+                title: '更新提示',
+                content: `更新下载完成，点击确认安装更新哦(自动)~`,
+                index: 99999,
+                noText: '取消',
+                yesText: '确定'
+            }
+            $('.shadowMock').fadeIn(400);
+            $('.confirmForm').fadeIn(300);
+            $('.confirmForm').css({
+                'background': getRandomCardColor('135deg', '0.95'),
+            });
+        });
+        ipcRenderer.on("downErr", (e, err) => {
             $('.updateBar').css({
                 'transition': 'all 500ms',
                 'display': 'none'
             });
             console.log(err)
-            clearInterval(this.updateInterval)
-            this.pop("下载出错了,请稍后重试",250,5000)
-        })
+            this.pop("下载出错了,请稍后重试", 250, 5000)
+        });
+        ipcRenderer.on("chunk", async (e, chunk) => {
+            if (!this.updateBar) {
+                $('.updateBar').css({
+                    'transition': 'all 500ms',
+                    'display': 'block'
+                });
+                $('.updateBar').animate({ bottom: '5%', opacity: '1' });
+                this.updateBar = true;
+            }
+            this.updateData.sizeMB = (chunk.size / 1024 / 1024).toFixed(2)
+            this.updateData.nowMB = (chunk.len / 1024 / 1024).toFixed(2)
+            $('#baring').css('width', (this.updateData.nowMB / this.updateData.sizeMB).toFixed(2) * 100 + '%')
+        });
     },
     methods: {
+        //通知主线程安装更新
+        installUpdate() {
+            ipcRenderer.send("updateAsar", "updateAsar");
+        },
         //调起进度条
         openBar() {
             $('.updateBar').css({
@@ -98,47 +127,19 @@ var app = new Vue({
                 'display': 'block'
             });
             $('.updateBar').animate({ bottom: '5%', opacity: '1' });
-
-            this.updateInterval = setInterval(async () => {
-                this.updateData.sizeMB = (await storage.getItem('downSize') / 1024 / 1024).toFixed(2)
-                this.updateData.nowMB = (await storage.getItem('downNow') / 1024 / 1024).toFixed(2)
-                $('#baring').css('width', (this.updateData.nowMB / this.updateData.sizeMB).toFixed(2) * 100 + '%')
-
-            }, 1000)
-        },
-        //检查是否有正在下载的进程
-        async findUpload() {
-            var once = await storage.getItem('downNow');
-            if (once > 0) {
-                setTimeout(async () => {
-                    var tow = await storage.getItem('downNow');
-                    if (once != tow) {
-                        this.openBar()
-                    } else {
-                        setTimeout(async () => {
-                            var three = await storage.getItem('downNow');
-                            if (once != three) {
-                                this.openBar()
-                            } else {
-                                this.checkUpdate()
-                            }
-                        }, 3000)
-                    }
-                }, 1000)
-            } else {
-                this.checkUpdate()
-            }
-
         },
         //取消更新
         cancelUpdate() {
             $('.shadowMock').fadeOut(400);
             $('.confirmForm').fadeOut(300);
+            //今天不再提醒
+            storage.setItem("todayNoUpdate", this.getNowFormatDay())
         },
         //立即更新
         updateNow() {
+            //今天不再提醒
+            storage.setItem("todayNoUpdate", this.getNowFormatDay())
             $('.updateBar').css({
-                // 'background': getRandomCardColor('135deg', '0.9'),
                 'transition': 'all 500ms',
                 'display': 'block'
             });
@@ -148,10 +149,14 @@ var app = new Vue({
             var filename = runPath + '/resources/update.as';
             ipcRenderer.send('downAsar', { uri: this.updateData.uri, filename: filename });
             this.openBar();
-            this.pop('请保持软件开启，正常使用!',230,4000)
+            this.pop('请保持软件开启，正常使用!', 230, 4000)
         },
         //检查更新
         async checkUpdate() {
+            //今日不再更新和正在更新下载
+            if (await storage.getItem("todayNoUpdate") == this.getNowFormatDay() || this.updateBar) {
+                return;
+            }
             //检查asar更新
             try {
                 if (await storage.getItem('autoUpdateAsar') == 'true') {
@@ -164,11 +169,7 @@ var app = new Vue({
                             // this.pop('Github上发布了新版本哦！', 230, 2000)
                             //删除一次，防止上次的下载中断文件
                             var fileUrl = data[0].assets[0].browser_download_url;
-                            var fileSize = data[0].assets[0].size;
-                            var len = 0;
-                            this.updateData.size = fileSize;
-                            this.updateData.uri = fileUrl;
-                            storage.setItem('downSize', fileSize);
+                            this.updateData.uri = fileUrl;;
                             //弹出更新提示框
                             this.confirmUse = 'update';
                             this.confirmForm = {
@@ -215,6 +216,10 @@ var app = new Vue({
         async confirmDel() {
             if (this.confirmUse == 'update') {
                 this.updateNow()
+                return;
+            }
+            if (this.confirmUse == 'installUpdate') {
+                this.installUpdate()
                 return;
             }
             var index = this.confirmForm.index;
@@ -410,11 +415,11 @@ var app = new Vue({
         // pop(text) { this.pop(text, 160, 2000) },
         // pop(text, width) { this.pop(text, width, 2000) },
         pop(text, width, time) {
-            if(!width){
-                width=160;
+            if (!width) {
+                width = 160;
             }
-            if(!time){
-                time=2000
+            if (!time) {
+                time = 2000
             }
             //提示弹窗
             $('.popText').text(text);
@@ -434,6 +439,19 @@ var app = new Vue({
                     $('.pop').css('width', '160px')
                 }, time + 1000)
             }
+        },
+        getNowFormatDay(nowDate) {
+            var char = "-";
+            if (nowDate == null) {
+                nowDate = new Date();
+            }
+            var day = nowDate.getDate();
+            var month = nowDate.getMonth() + 1;
+            var year = nowDate.getFullYear();
+            return year + char + this.completeDate(month) + char + this.completeDate(day);
+        },
+        completeDate(value) {
+            return value < 10 ? "0" + value : value;
         },
         //渲染卡片
         atvImg() {
