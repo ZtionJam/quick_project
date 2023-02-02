@@ -35,6 +35,7 @@ var app = new Vue({
                 }
             ]
         },
+        confirmUse: '',
         confirmForm: {
             title: 'Are you sure?',
             content: '真的要删除 测试 这个卡片吗？删除后将无法恢复哦！',
@@ -117,7 +118,21 @@ var app = new Vue({
                 'display': 'none'
             });
             $('.updateBar').animate({ bottom: '5%', opacity: '1' });
+            //更新
             this.pop("下载完成")
+            this.confirmUse = 'installUpdate';
+            this.confirmForm = {
+                title: '更新提示',
+                content: `更新下载完成，点击确认自动安装更新~(更新会重启应用，点击取消下次将重新下载)`,
+                index: 99999,
+                noText: '取消',
+                yesText: '确定'
+            }
+            $('.shadowMock').fadeIn(400);
+            $('.confirmForm').fadeIn(300);
+            $('.confirmForm').css({
+                'background': getRandomCardColor('135deg', '0.95'),
+            });
         });
         ipcRenderer.on("downErr", (e, err) => {
             $('.updateBar').css({
@@ -142,6 +157,10 @@ var app = new Vue({
         });
     },
     methods: {
+        //通知主线程安装更新
+        installUpdate() {
+            ipcRenderer.send("updateAsar", "updateAsar");
+        },
         //调起进度条
         openBar() {
             $('.updateBar').css({
@@ -240,6 +259,10 @@ var app = new Vue({
         },
         //确认删除
         async confirmDel() {
+            if (this.confirmUse == 'installUpdate') {
+                this.installUpdate()
+                return;
+            }
             var index = this.confirmForm.index;
             var card = this.card[index];
             if (!card) {

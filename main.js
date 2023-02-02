@@ -1,12 +1,9 @@
 const { dialog, Menu, app, BrowserWindow, ipcRenderer, ipcMain } = require('electron')
 // Menu.setApplicationMenu(null)
 require("@electron/remote/main").initialize();
-const path = require('path');
 const fs = require('fs')
 const ChildProccess = require('child_process');
 const https = require('https');
-var request = require('request');
-const { storage } = require(path.join(__dirname + "/src/sqlite/", 'sqlite'))
 
 
 var runPath = process.cwd().toString();

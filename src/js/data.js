@@ -82,7 +82,7 @@ var app = new Vue({
             this.confirmUse = 'installUpdate';
             this.confirmForm = {
                 title: '更新提示',
-                content: `更新下载完成，点击确认安装更新哦(自动)~`,
+                content: `更新下载完成，点击确认自动安装更新~(更新会重启应用,点击取消下次将重新下载)`,
                 index: 99999,
                 noText: '取消',
                 yesText: '确定'
@@ -174,7 +174,7 @@ var app = new Vue({
                             this.confirmUse = 'update';
                             this.confirmForm = {
                                 title: '有更新哦',
-                                content: `检测到有新的版本更新，是否立即更新？(取消更新后今天不再弹窗提示)`,
+                                content: `检测到有新的版本更新，是否立即更新？(取消后今天不再提示,可在Github查看更新内容)`,
                                 index: 99999,
                                 noText: '暂不更新',
                                 yesText: '立即更新'
