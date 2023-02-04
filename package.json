@@ -12,7 +12,7 @@
     "package-mac": "electron-packager . QuickProject --platform=darwin --arch=x64 --out=out --icon=./icon.ico"
   },
   "author": "ztion",
-  "license": "ISC",
+  "license": "GPL 3",
   "devDependencies": {
     "electron": "^22.0.0",
     "electron-packager": "^17.1.1"

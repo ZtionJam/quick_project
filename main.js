@@ -4,6 +4,7 @@ require("@electron/remote/main").initialize();
 const fs = require('fs')
 const ChildProccess = require('child_process');
 const https = require('https');
+const path = require('path')
 
 
 var runPath = process.cwd().toString();
@@ -63,7 +64,7 @@ const createWindow = async () => {
         // 初始化后再显示
         win.show()
         //打开开发工具
-        win.webContents.openDevTools();
+        // win.webContents.openDevTools();
     })
     // 推出
     ipcMain.on('closeApp', () => {
@@ -76,7 +77,7 @@ const createWindow = async () => {
     })
     // 打开项目
     ipcMain.on('openProject', () => {
-        win.loadFile('./src/page/project.html')
+        win.loadFile('./src/page/card.html')
     })
     // 返回首页
     ipcMain.on('backIndex', () => {
@@ -96,7 +97,7 @@ const createWindow = async () => {
     });
     // 更新Asar
     ipcMain.on('updateAsar', () => {
-        updateNow=true;
+        updateNow = true;
         app.quit();
     });
     // 下载Asar

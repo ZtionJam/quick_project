@@ -1,12 +1,9 @@
 const { ipcRenderer } = require('electron');
 const path = require('path')
-const { db, dbEx, newData, storage } = require(path.join(__dirname + "/sqlite/", 'sqlite'))
-const https = require('https');
+const {  dbEx, newData, storage } = require(path.join(__dirname + "/sqlite/", 'sqlite'))
 var request = require('request');
-const download = require('download');
 const fs = require('fs')
-
-
+//运行目录
 var runPath = process.cwd().toString();
 
 var $ = require('jquery');
@@ -67,6 +64,8 @@ var app = new Vue({
         })
     },
     async mounted() {
+        //初始化检查
+        const { config } = require(path.join(__dirname + "/sqlite/", 'init'))
         this.atvImg();
         //检查更新信息
         this.checkUpdate()
@@ -114,6 +113,9 @@ var app = new Vue({
             this.updateData.nowMB = (chunk.len / 1024 / 1024).toFixed(2)
             $('#baring').css('width', (this.updateData.nowMB / this.updateData.sizeMB).toFixed(2) * 100 + '%')
         });
+        if(newData){
+            this.pop('初始化完成，欢迎使用！');
+        }
     },
     methods: {
         //通知主线程安装更新

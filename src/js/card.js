@@ -1,9 +1,8 @@
 
 const { ipcRenderer } = require('electron');
 var $ = require('jquery');
-// const storage = require('electron-localstorage');
 const path = require('path')
-const { db, dbEx, storage } = require(path.join(__dirname + "/../sqlite/", 'sqlite'));
+const { dbEx, storage } = require(path.join(__dirname + "/../sqlite/", 'sqlite'));
 const XLSX = require("xlsx");
 const XLSX2 = require("xlsx-style");
 const fs = require('fs')
@@ -47,7 +46,9 @@ var app = new Vue({
             sizeMB: '0',
             nowMB: '0'
         },
-        updateBar: false
+        updateBar: false,
+        opt: 'add',
+        updateIndex: 0
 
     },
     async created() {
@@ -333,7 +334,7 @@ var app = new Vue({
                 // console.log(dsql)
                 await dbEx.insert(dsql);
             });
-            var index = await storage.getItem('updateIndex') || 0;
+            var index = this.updateIndex || 0;
             this.card[index] = JSON.parse(JSON.stringify(this.addFromData))
             this.$forceUpdate()
             this.$nextTick(() => {
@@ -344,8 +345,8 @@ var app = new Vue({
         },
         //修改卡片信息
         async editCard(card, inedx) {
-            storage.setItem("opt", 'update');
-            storage.setItem("updateIndex", inedx);
+            this.opt = 'update';
+            this.updateIndex = inedx;
             // console.log(card)
             //打开编辑窗口
             this.addFromData = JSON.parse(JSON.stringify(card))
@@ -357,7 +358,7 @@ var app = new Vue({
         },
         //保存添加窗口
         async savaAdd() {
-            if ('update' == await storage.getItem("opt")) {
+            if ('update' == this.opt) {
                 this.saveUpdate()
                 return;
             }
@@ -455,7 +456,7 @@ var app = new Vue({
                         .css('top').indexOf("px"))) + 10 + 'px')
         },
         openAddForm() {
-            storage.setItem("opt", 'add');
+            this.opt = 'add';
             $('.shadowMock').fadeIn(400);
             $('.addCardForm').fadeIn(300);
             $('.addCardForm').css({
